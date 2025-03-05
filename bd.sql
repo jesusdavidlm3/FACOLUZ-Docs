@@ -118,11 +118,11 @@ CREATE TABLE IF NOT EXISTS `consultations` (
   `dentalDiagram` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
   `childrenDentalDiagram` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
   `individualForecast` varchar(50) NOT NULL,
-  `generalForecast` varchar(50) NOT NULL DEFAULT '',
-  `physicalTest` varchar(50) NOT NULL DEFAULT '',
+  `generalForecast` varchar(50) NOT NULL,
+  `physicalTest` varchar(50) NOT NULL,
   `oclusionExamination` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL CHECK (json_valid(`oclusionExamination`)),
   `complementaryTests` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL CHECK (json_valid(`complementaryTests`)),
-  `generalObservations` varchar(100) NOT NULL DEFAULT '',
+  `generalObservations` varchar(100) NOT NULL,
   `pulpVitality` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL CHECK (json_valid(`pulpVitality`)),
   PRIMARY KEY (`id`),
   KEY `patientToConsultations` (`patientId`),
@@ -133,7 +133,7 @@ CREATE TABLE IF NOT EXISTS `consultations` (
 
 -- Volcando estructura para tabla faco_luz.evaluations
 CREATE TABLE IF NOT EXISTS `evaluations` (
-  `id` binary(16) NOT NULL DEFAULT '\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0',
+  `id` binary(16) NOT NULL,
   `notes` varchar(200) NOT NULL,
   `consultationId` binary(16) NOT NULL,
   `studentId` int(10) unsigned NOT NULL,
@@ -180,7 +180,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   `passwordSHA256` varchar(64) NOT NULL,
   `type` int(11) NOT NULL,
   `identificationType` int(10) NOT NULL,
-  `active` tinyint(1) NOT NULL,
+  `active` tinyint(1) NOT NULL DEFAULT 1,
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
