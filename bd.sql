@@ -67,7 +67,7 @@ CREATE TABLE IF NOT EXISTS `childhistories` (
   `representativeLastname` varchar(25) NOT NULL,
   `representativeIdentification` varchar(15) NOT NULL,
   `representativePhone` varchar(15) NOT NULL,
-  `representative instructionGrade` enum('Prescolar','Primaria','Bachiller','Universitario','Ninguno') NOT NULL,
+  `representativeInstructionGrade` enum('Prescolar','Primaria','Bachiller','Universitario','Ninguno') NOT NULL,
   `homeOwnership` enum('Familiar','Propia','Alquilada') NOT NULL,
   `numberOfRooms` int(11) NOT NULL,
   `representativeWorking` int(11) NOT NULL,

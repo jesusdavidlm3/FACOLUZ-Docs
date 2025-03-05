@@ -1,0 +1,69 @@
+
+div {
+    background-color: rgb(114, 153, 212);
+    width: 100px;
+    height: 100px;
+    border: 3px solid black;
+    
+}
+body{
+    height: 1400px;
+    width: 1400px;
+    background-color: white;
+    border: none;
+
+}
+.figure{
+    
+    background-color: white;
+    border: none;
+    width: 200px;
+    height: 200px;
+    display: grid;
+    grid-template-columns: 100px 100px;
+    grid-template-rows: 100px 100px;
+    grid-column: 2;
+    grid-row: 2;
+    
+    rotate: 45deg;
+    margin: 50px 30px;
+}
+
+.top-left {
+    border-top-left-radius: 100%;
+    
+}
+.top-right {
+    border-top-right-radius: 100%;
+}
+.bottom-left {
+    border-bottom-left-radius: 100%;
+}
+.bottom-right   {
+    border-bottom-right-radius: 100%;
+}
+
+.center{
+    position: relative;
+    border-radius: 50% 50%; 
+    top: -150px;
+    right: -50px;
+    display: inline;
+}
+
+.top-left:hover{
+    background-color: red;
+    
+}
+.top-right:hover {
+    background-color: red;
+}
+.bottom-left:hover {
+    background-color: red;
+}
+.bottom-right:hover   {
+    background-color: red;
+}
+.center:hover{
+    background-color: red;
+}
