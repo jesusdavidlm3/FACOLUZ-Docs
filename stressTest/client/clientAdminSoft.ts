@@ -1,4 +1,4 @@
-import { httpMethods } from './httpMethods'
+import { httpMethods } from './httpMethods.ts'
 
 const http = new httpMethods()
 let token: string

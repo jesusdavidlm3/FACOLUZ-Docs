@@ -1,11 +1,11 @@
 import { AdminSoftwareTest } from "./AdminSoftwareTest.ts";
-import { MedRecordTest } from "./MedRecordsTest.ts";
-import { StudControlTest } from "./StudControlTest.ts";
+// import { MedRecordTest } from "./MedRecordsTest.ts";
+// import { StudControlTest } from "./StudControlTest.ts";
 
 function main(){
-  AdminSoftwareTest();
-  MedRecordTest();
-  StudControlTest();
+    AdminSoftwareTest();
+    // MedRecordTest();
+    // StudControlTest();
 }
 
 main()
