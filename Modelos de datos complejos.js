@@ -14,8 +14,6 @@ padecimientos = {
 	alergiaMedicamentos:  null || 'string',	
 }
 antecedentes = {
-	tabaco: true || false,
-	tabacoCantidad: null || int,
 	alergiaMedicamento: true || false,
 	alergiaMedicamentoDescripcion: null || 'string',
 	efectosAnestesia: 'Si', 'No', 'No sabe'
@@ -32,12 +30,14 @@ antecedentes = {
 }
 
 habitos = {
+	tabaco: true || false,
+	tabacoCantidad: null || int,
 	morderseLasUñas: true || false,
 	morderseLosLabios: true || false,
 	morderseLasMejillas: true || false,
 	respiracionBucal: true || false,
 	morderObjetos: true || false,
-	otros: : true || false,
+	otros: true || false,
 	cual: null || 'string'
 }
 
