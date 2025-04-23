@@ -165,7 +165,7 @@ CREATE TABLE IF NOT EXISTS `patients` (
   `instructionGrade` enum('Prescolar','Primaria','Bachiller','Universitario','Ninguno') NOT NULL,
   `race` enum('Blanco','Negro','Moreno','indigena') NOT NULL,
   `proneToBleeding` enum('Si','No','No sabe') NOT NULL,
-  `ailments` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL CHECK (json_valid(`aliments`)),
+  `ailments` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL CHECK (json_valid(`ailments`)),
   `patientType` int(11) NOT NULL,
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;

@@ -32,7 +32,6 @@ CREATE TABLE IF NOT EXISTS `changelogs` (
 
 CREATE TABLE IF NOT EXISTS `patients` (
     `id` binary(16) NOT NULL,
-    `patientType` int(11) NOT NULL,
     `createPatient` datetime DEFAULT CURRENT_TIMESTAMP(),
 
     /*Datos personales*/
@@ -54,7 +53,7 @@ CREATE TABLE IF NOT EXISTS `patients` (
     /*Datos en caso de emergencia*/
     `emergencyName` varchar(50) DEFAULT NULL,
     `emergencyPhone` varchar(15) DEFAULT NULL,
-    `emergencyRelationship` varchar(50) DEFAULT NULL,
+    `emergencyRelationship` enum('Padre', 'Abuelo', 'Hijo', 'Amigo', 'Nieto') DEFAULT NULL,
 
     /*Datos de acompañante( en casos que aplique)*/
     `companionName` varchar(50) DEFAULT NULL,
@@ -79,7 +78,7 @@ CREATE TABLE IF NOT EXISTS `patients` (
     /* Pronostico */
     `forecast` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
 
-    /* informacion del estudiante y docente */
+    /* informacion del estudiante y docente que abren la historia*/
     `idStudent` int(10) unsigned NOT NULL,
     `idTeacher` int(10) unsigned NOT NULL,
 
@@ -105,7 +104,7 @@ CREATE TABLE IF NOT EXISTS `adulthistories` (
     `income` enum('-1','1-2','3-4','5+','SM+D') NOT NULL,
     PRIMARY KEY (`id`),
     KEY `patientToAdultHistories` (`patientId`),
-    CONSTRAINT `patientToAdultHistories` FOREIGN KEY (`patientId`) REFERENCES `adulthistories` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+    CONSTRAINT `patientToAdultHistories` FOREIGN KEY (`patientId`) REFERENCES `patients` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 
