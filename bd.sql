@@ -186,7 +186,8 @@ CREATE TABLE IF NOT EXISTS `users` (
 
 CREATE TABLE IF NOT EXISTS `settings` (
   `label` varchar(50) NOT NULL,
-  `value` int NOT NULL
+  `value` int NOT NULL,
+  PRIMARY KEY (`label`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 -- Volcando datos para la tabla faco_luz.users: ~1 rows (aproximadamente)
