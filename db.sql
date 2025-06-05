@@ -1,8 +1,8 @@
 -- --------------------------------------------------------
 -- Host:                         127.0.0.1
--- Versión del servidor:         10.11.8-MariaDB - mariadb.org binary distribution
--- SO del servidor:              Win64
--- HeidiSQL Versión:             12.6.0.6765
+-- Versión del servidor:         10.11.11-MariaDB-0+deb12u1 - Debian 12
+-- SO del servidor:              debian-linux-gnu
+-- HeidiSQL Versión:             12.10.0.7000
 -- --------------------------------------------------------
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
@@ -21,8 +21,8 @@ USE `faco_luz`;
 
 -- Volcando estructura para tabla faco_luz.adulthistories
 CREATE TABLE IF NOT EXISTS `adulthistories` (
-  `id` binary(16) NOT NULL,
-  `patientId` binary(16) NOT NULL,
+  `id` uuid NOT NULL,
+  `patientId` uuid NOT NULL,
   `addressCity` varchar(25) NOT NULL,
   `addressState` varchar(25) NOT NULL,
   `addressMunicipality` varchar(25) NOT NULL,
@@ -43,7 +43,7 @@ CREATE TABLE IF NOT EXISTS `adulthistories` (
 
 -- Volcando estructura para tabla faco_luz.changelogs
 CREATE TABLE IF NOT EXISTS `changelogs` (
-  `id` binary(16) NOT NULL,
+  `id` uuid NOT NULL,
   `changeType` int(11) NOT NULL,
   `dateTime` datetime NOT NULL,
   `userModificatorId` int(15) unsigned NOT NULL,
@@ -55,12 +55,12 @@ CREATE TABLE IF NOT EXISTS `changelogs` (
   CONSTRAINT `modificatorToLogs` FOREIGN KEY (`userModificatorId`) REFERENCES `users` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
--- Volcando datos para la tabla faco_luz.changelogs: ~0 rows (aproximadamente)
+-- Volcando datos para la tabla faco_luz.changelogs: ~4 rows (aproximadamente)
 
 -- Volcando estructura para tabla faco_luz.childhistories
 CREATE TABLE IF NOT EXISTS `childhistories` (
-  `id` binary(16) NOT NULL,
-  `patientId` binary(16) NOT NULL,
+  `id` uuid NOT NULL,
+  `patientId` uuid NOT NULL,
   `childPosition` int(11) NOT NULL,
   `currentStudying` int(11) NOT NULL,
   `representativename` varchar(25) NOT NULL,
@@ -98,12 +98,12 @@ CREATE TABLE IF NOT EXISTS `clases` (
   CONSTRAINT `userToClases` FOREIGN KEY (`userId`) REFERENCES `users` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
--- Volcando datos para la tabla faco_luz.clases: ~0 rows (aproximadamente)
+-- Volcando datos para la tabla faco_luz.clases: ~2 rows (aproximadamente)
 
 -- Volcando estructura para tabla faco_luz.consultations
 CREATE TABLE IF NOT EXISTS `consultations` (
-  `id` binary(16) NOT NULL,
-  `patientId` binary(16) NOT NULL,
+  `id` uuid NOT NULL,
+  `patientId` uuid NOT NULL,
   `consultationReason` varchar(100) NOT NULL,
   `currentDisease` varchar(50) NOT NULL,
   `dateTime` datetime NOT NULL,
@@ -131,11 +131,27 @@ CREATE TABLE IF NOT EXISTS `consultations` (
 
 -- Volcando datos para la tabla faco_luz.consultations: ~0 rows (aproximadamente)
 
+-- Volcando estructura para tabla faco_luz.dates
+CREATE TABLE IF NOT EXISTS `dates` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `patientId` uuid DEFAULT NULL,
+  `doctorId` int(10) unsigned DEFAULT NULL,
+  `date` datetime DEFAULT NULL,
+  `status` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `patientOnDate` (`patientId`),
+  KEY `doctorOnDate` (`doctorId`),
+  CONSTRAINT `doctorOnDate` FOREIGN KEY (`doctorId`) REFERENCES `users` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `patientOnDate` FOREIGN KEY (`patientId`) REFERENCES `patients` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+-- Volcando datos para la tabla faco_luz.dates: ~0 rows (aproximadamente)
+
 -- Volcando estructura para tabla faco_luz.evaluations
 CREATE TABLE IF NOT EXISTS `evaluations` (
-  `id` binary(16) NOT NULL,
+  `id` uuid NOT NULL,
   `notes` varchar(200) NOT NULL,
-  `consultationId` binary(16) NOT NULL,
+  `consultationId` uuid NOT NULL,
   `studentId` int(10) unsigned NOT NULL,
   `teacherId` int(10) unsigned NOT NULL,
   PRIMARY KEY (`id`),
@@ -151,7 +167,7 @@ CREATE TABLE IF NOT EXISTS `evaluations` (
 
 -- Volcando estructura para tabla faco_luz.patients
 CREATE TABLE IF NOT EXISTS `patients` (
-  `id` binary(16) NOT NULL,
+  `id` uuid NOT NULL,
   `name` varchar(50) NOT NULL,
   `lastname` varchar(50) NOT NULL,
   `patientIdentificacion` int(10) unsigned DEFAULT NULL,
@@ -160,17 +176,42 @@ CREATE TABLE IF NOT EXISTS `patients` (
   `sex` enum('M','F') NOT NULL,
   `bloodType` enum('A+','A-','B+','B-','AB+','AB-','O+','O-') NOT NULL,
   `address` varchar(100) NOT NULL,
-  `emergencyName` varchar(50) DEFAULT NULL,
-  `emergencyPhone` varchar(15) DEFAULT NULL,
+  `emergencyName` varchar(50) NOT NULL,
+  `emergencyPhone` varchar(15) NOT NULL,
   `instructionGrade` enum('Prescolar','Primaria','Bachiller','Universitario','Ninguno') NOT NULL,
   `race` enum('Blanco','Negro','Moreno','indigena') NOT NULL,
   `proneToBleeding` enum('Si','No','No sabe') NOT NULL,
-  `ailments` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL CHECK (json_valid(`ailments`)),
-  `patientType` int(11) NOT NULL,
-  PRIMARY KEY (`id`) USING BTREE
+  `ailments` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  `createPatient` datetime NOT NULL,
+  `identificationType` int(11) NOT NULL,
+  `phone` varchar(15) NOT NULL,
+  `birthPlace` varchar(50) NOT NULL,
+  `religion` varchar(25) DEFAULT NULL,
+  `addressMunicipality` varchar(25) NOT NULL,
+  `addressCity` varchar(25) NOT NULL DEFAULT '',
+  `emergencyRelationship` int(10) unsigned NOT NULL,
+  `companionName` varchar(30) DEFAULT NULL,
+  `companionPhone` varchar(15) DEFAULT NULL,
+  `companionRelationship` int(10) unsigned DEFAULT NULL,
+  `idStudent` int(10) unsigned NOT NULL DEFAULT 0,
+  `idTeacher` int(10) unsigned NOT NULL,
+  PRIMARY KEY (`id`) USING BTREE,
+  KEY `historyIdStudent` (`idStudent`),
+  CONSTRAINT `historyIdStudent` FOREIGN KEY (`idStudent`) REFERENCES `users` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 -- Volcando datos para la tabla faco_luz.patients: ~0 rows (aproximadamente)
+
+-- Volcando estructura para tabla faco_luz.settings
+CREATE TABLE IF NOT EXISTS `settings` (
+  `label` varchar(50) NOT NULL,
+  `value` int(11) NOT NULL,
+  PRIMARY KEY (`label`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+-- Volcando datos para la tabla faco_luz.settings: ~1 rows (aproximadamente)
+INSERT INTO `settings` (`label`, `value`) VALUES
+	('startedPeriod', 0);
 
 -- Volcando estructura para tabla faco_luz.users
 CREATE TABLE IF NOT EXISTS `users` (
@@ -184,26 +225,10 @@ CREATE TABLE IF NOT EXISTS `users` (
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
-CREATE TABLE IF NOT EXISTS `settings` (
-  `label` varchar(50) NOT NULL,
-  `value` int NOT NULL,
-  PRIMARY KEY (`label`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
-
--- Volcando datos para la tabla faco_luz.users: ~1 rows (aproximadamente)
+-- Volcando datos para la tabla faco_luz.users: ~5 rows (aproximadamente)
 INSERT INTO `users` (`id`, `name`, `lastname`, `passwordSHA256`, `type`, `identificationType`, `active`) VALUES
 	(1, 'admin', 'admin', '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918', 0, 0, 1);
 
-INSERT INTO `settings` (`label`, `value`) VALUES('startedPeriod', 0)
-
-CREATE TABLE IF NOT EXISTS `dates`(
-  `id` binary(16) NOT NULL,
-  `patientId` int NOT NULL,
-  `doctorId` int NOT NULL,
-  `date` dateTime NOT NULL,
-  `status` int NOT NULL DEFAULT 0
-  PRIMARY KEY (`id`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 /*!40103 SET TIME_ZONE=IFNULL(@OLD_TIME_ZONE, 'system') */;
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
 /*!40014 SET FOREIGN_KEY_CHECKS=IFNULL(@OLD_FOREIGN_KEY_CHECKS, 1) */;
