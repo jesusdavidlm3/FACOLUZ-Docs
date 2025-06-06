@@ -3,8 +3,8 @@ export function searchOnList(list, id){
 }
 
 export const instructionGradeList = [
-    {label: 'Ninguno', value: 0},
-    {label: 'Prescolar', value: 1},
+    {label: 'Ninguno', value: 1},
+    {label: 'Prescolar', value: 2},
     {label: 'Primaria', value: 3},
     {label: 'Bachillerato', value: 4},
     {label: 'Universitario', value: 5},
@@ -12,25 +12,25 @@ export const instructionGradeList = [
 ]
 
 export const bloodTypeList = [
-    {label: 'A+', value: 0},
-    {label: 'O+', value: 1},
-    {label: 'B+', value: 2},
-    {label: 'AB+', value: 3},
-    {label: 'A-', value: 4},
-    {label: 'O-', value: 5},
-    {label: 'B-', value: 6},
-    {label: 'AB-', value: 7},
+    {label: 'A+', value: 1},
+    {label: 'A-', value: 2},
+    {label: 'B+', value: 3},
+    {label: 'B-', value: 4},
+    {label: 'AB+', value: 5},
+    {label: 'AB-', value: 6},
+    {label: 'O+', value: 7},
+    {label: 'O-', value: 8},
 ]
 
 export const sexList = [
-    {label: 'Masculino', value: 0},
-    {label: 'Femenino', value: 1}
+    {label: 'Masculino', value: 1},
+    {label: 'Femenino', value: 2}
 ]
 
 export const identificationList = [
     {label: 'V', value: 1},
     {label: 'E', value: 2},
-    {label: 'Cod.', value: 0},
+    {label: 'Cod.', value: 3},
 ]
 
 export const trueFalseList = [
@@ -39,10 +39,10 @@ export const trueFalseList = [
 ]
 
 export const raceList = [
-    {label: 'Blanco', value: 0},
-    {label: 'Negro', value: 1},
-    {label: 'Moreno', value: 2},
-    {label: 'Indigena', value: 3},
+    {label: 'Blanco', value: 1},
+    {label: 'Negro', value: 2},
+    {label: 'Moreno', value: 3},
+    {label: 'Indigena', value: 4},
 ]
 
 export const alimentsList = [
@@ -81,20 +81,33 @@ export const userTypeList = [
 ]
 
 export const dateStatus = [
-    {label: 'Pendiente', value: 0},
-    {label: 'Atendida', value: 1},
-    {label: 'Cancelada', value: 2},
+    {label: 'Pendiente', value: 1},
+    {label: 'Atendida', value: 2},
+    {label: 'Cancelada', value: 3},
 ]
 
 export const relationshipType = [
-    {label: 'Madre', value: 0},
-    {label: 'Padre', value: 0},
-    {label: 'Abuelo/a', value: 0},
-    {label: 'Hermano/a', value: 0},
-    {label: 'Nieto/a', value: 0},
-    {label: 'Hijo/a', value: 0},
-    {label: 'Esposo/a', value: 0},
-    {label: 'Tio/a', value: 0},
-    {label: 'Sobrino/a', value: 0},
-    {label: 'Otros', value: 0},
+    {label: 'Madre', value: 1},
+    {label: 'Padre', value: 2},
+    {label: 'Abuelo/a', value: 4},
+    {label: 'Hermano/a', value: 5},
+    {label: 'Nieto/a', value: 6},
+    {label: 'Hijo/a', value: 7},
+    {label: 'Esposo/a', value: 8},
+    {label: 'Tio/a', value: 9},
+    {label: 'Sobrino/a', value: 10},
+    {label: 'Otros', value: 11},
 ]
+
+export const proneToBleedingList = [
+    {label: 'Si', value: 1},
+    {label: 'No', value: 2},
+    {label: 'No Sabe', value: 3}
+]
+
+export const homeOwnership = [
+    {label: 'Familiar', value: 1},
+    {label: 'Propia', value: 2},
+    {label: 'Alquilada', value: 3},
+]
+
