@@ -99,7 +99,7 @@ export const relationshipType = [
     {label: 'Otros', value: 11},
 ]
 
-export const proneToBleedingList = [
+export const listOfThree = [
     {label: 'Si', value: 1},
     {label: 'No', value: 2},
     {label: 'No Sabe', value: 3}
@@ -111,3 +111,11 @@ export const homeOwnership = [
     {label: 'Alquilada', value: 3},
 ]
 
+export const ethnicityList = [
+    {label: "Wayuu", value: 1},
+    {label: "Añu", value: 2},
+    {label: "Bari", value: 3},
+    {label: "Yukpa", value: 4},
+    {label: "Japreria", value: 5},
+    {label: "Otros", value: 6},
+]
