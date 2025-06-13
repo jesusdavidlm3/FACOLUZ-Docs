@@ -21,22 +21,13 @@ USE `faco_luz`;
 
 -- Volcando estructura para tabla faco_luz.adulthistories
 CREATE TABLE IF NOT EXISTS `adulthistories` (
-  `id` uuid NOT NULL,
   `patientId` uuid NOT NULL,
-  `addressCity` varchar(25) NOT NULL,
-  `addressState` varchar(25) NOT NULL,
-  `addressMunicipality` varchar(25) NOT NULL,
-  `currentWorking` int(11) NOT NULL DEFAULT 0,
-  `workType` varchar(30) NOT NULL DEFAULT '0',
-  `workAddress` varchar(100) NOT NULL DEFAULT '0',
-  `workPhone` varchar(15) NOT NULL DEFAULT '0',
-  `workEntry` varchar(10) NOT NULL DEFAULT '0',
-  `workLeaving` varchar(10) NOT NULL DEFAULT '0',
-  `familyBurden` int(11) NOT NULL DEFAULT 0,
-  `phone` varchar(15) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`id`),
+  `currentWorking` enum('Si','No') NOT NULL,
+  `workType` varchar(30) DEFAULT NULL,
+  `familyBurden` int(11) unsigned NOT NULL,
+  `phone` varchar(15) NOT NULL,
   KEY `patientToAdultHistories` (`patientId`),
-  CONSTRAINT `patientToAdultHistories` FOREIGN KEY (`patientId`) REFERENCES `adulthistories` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+  CONSTRAINT `patientToAdultHistory` FOREIGN KEY (`patientId`) REFERENCES `patients` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 -- Volcando datos para la tabla faco_luz.adulthistories: ~0 rows (aproximadamente)
@@ -55,35 +46,27 @@ CREATE TABLE IF NOT EXISTS `changelogs` (
   CONSTRAINT `modificatorToLogs` FOREIGN KEY (`userModificatorId`) REFERENCES `users` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
--- Volcando datos para la tabla faco_luz.changelogs: ~4 rows (aproximadamente)
+-- Volcando datos para la tabla faco_luz.changelogs: ~0 rows (aproximadamente)
 
 -- Volcando estructura para tabla faco_luz.childhistories
 CREATE TABLE IF NOT EXISTS `childhistories` (
-  `id` uuid NOT NULL,
   `patientId` uuid NOT NULL,
-  `childPosition` int(11) NOT NULL,
-  `currentStudying` int(11) NOT NULL,
-  `representativename` varchar(25) NOT NULL,
-  `representativeLastname` varchar(25) NOT NULL,
+  `childPosition` int(11) unsigned NOT NULL,
+  `currentStudying` enum('Si','No') NOT NULL,
+  `representativeName` varchar(25) NOT NULL,
   `representativeIdentification` varchar(15) NOT NULL,
   `representativePhone` varchar(15) NOT NULL,
   `representativeInstructionGrade` enum('Ninguno','Prescolar','Primaria','Bachillerato','Universitario','Postgrado') NOT NULL,
   `homeOwnership` enum('Familiar','Propia','Alquilada') NOT NULL,
-  `numberOfRooms` int(11) NOT NULL,
-  `representativeWorking` int(11) NOT NULL,
-  `representativeWorkType` varchar(50) NOT NULL DEFAULT '',
-  `representativeWorkAddress` varchar(100) NOT NULL DEFAULT '',
-  `representativeWorkPhone` varchar(15) NOT NULL DEFAULT '',
-  `representativeWorkEntry` varchar(10) NOT NULL DEFAULT '',
-  `representativeWorkLeaving` varchar(10) NOT NULL DEFAULT '',
-  `representativeFamilyBurden` int(11) NOT NULL DEFAULT 0,
-  `familyDentalHistory` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL CHECK (json_valid(`familyDentalHistory`)),
-  `dietaryHabits` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL CHECK (json_valid(`dietaryHabits`)),
-  `height` decimal(2,2) NOT NULL DEFAULT 0.00,
-  `weight` decimal(2,2) NOT NULL,
-  PRIMARY KEY (`id`),
+  `representativeWorking` enum('Si','No') NOT NULL,
+  `representativeWorkType` varchar(50) DEFAULT NULL,
+  `representativeFamilyBurden` int(11) unsigned NOT NULL DEFAULT 0,
+  `familyDentalHistory` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  `dietaryHabits` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  `height` decimal(2,2) unsigned DEFAULT NULL,
+  `weight` decimal(2,2) unsigned DEFAULT NULL,
   KEY `patientToChildHistories` (`patientId`),
-  CONSTRAINT `patientToChildHistories` FOREIGN KEY (`patientId`) REFERENCES `patients` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+  CONSTRAINT `FK_childhistories_patients` FOREIGN KEY (`patientId`) REFERENCES `patients` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 -- Volcando datos para la tabla faco_luz.childhistories: ~0 rows (aproximadamente)
@@ -98,7 +81,7 @@ CREATE TABLE IF NOT EXISTS `clases` (
   CONSTRAINT `userToClases` FOREIGN KEY (`userId`) REFERENCES `users` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
--- Volcando datos para la tabla faco_luz.clases: ~2 rows (aproximadamente)
+-- Volcando datos para la tabla faco_luz.clases: ~0 rows (aproximadamente)
 
 -- Volcando estructura para tabla faco_luz.consultations
 CREATE TABLE IF NOT EXISTS `consultations` (
@@ -124,6 +107,9 @@ CREATE TABLE IF NOT EXISTS `consultations` (
   `complementaryTests` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL CHECK (json_valid(`complementaryTests`)),
   `generalObservations` varchar(100) NOT NULL,
   `pulpVitality` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL CHECK (json_valid(`pulpVitality`)),
+  `pregnacy` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`pregnacy`)),
+  `reactionToAnesthesia` enum('Si','No','No Sabe') NOT NULL,
+  `reactionToAnesthesiaDesc` varchar(50) DEFAULT '',
   PRIMARY KEY (`id`),
   KEY `patientToConsultations` (`patientId`),
   CONSTRAINT `patientToConsultations` FOREIGN KEY (`patientId`) REFERENCES `patients` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
@@ -137,7 +123,7 @@ CREATE TABLE IF NOT EXISTS `dates` (
   `patientId` uuid DEFAULT NULL,
   `doctorId` int(10) unsigned DEFAULT NULL,
   `date` datetime DEFAULT NULL,
-  `status` enum('Pendiente','Atendida','Cancelada') DEFAULT 'Pendiente',
+  `status` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `patientOnDate` (`patientId`),
   KEY `doctorOnDate` (`doctorId`),
@@ -174,30 +160,35 @@ CREATE TABLE IF NOT EXISTS `patients` (
   `patientCode` int(10) unsigned DEFAULT NULL,
   `birthDate` date NOT NULL,
   `sex` enum('M','F') NOT NULL,
-  `bloodType` enum('A+','A-','B+','B-','AB+','AB-','O+','O-'),
+  `bloodType` enum('A+','A-','B+','B-','AB+','AB-','O+','O-') DEFAULT NULL,
   `address` varchar(100) NOT NULL,
   `emergencyName` varchar(50) NOT NULL,
   `emergencyPhone` varchar(15) NOT NULL,
   `instructionGrade` enum('Ninguno','Prescolar','Primaria','Bachiller','Universitario','Postgrado') NOT NULL,
   `race` enum('Blanco','Negro','Moreno','indigena') NOT NULL,
-  `proneToBleeding` enum('Si','No','No sabe'),
+  `proneToBleeding` enum('Si','No','No sabe') DEFAULT NULL,
   `ailments` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
   `createPatient` datetime NOT NULL,
-  `identificationType` int(11) NOT NULL,
-  `phone` varchar(15) NOT NULL,
+  `identificationType` enum('V','E','Cod.') NOT NULL,
   `birthPlace` varchar(50) NOT NULL,
-  `religion` varchar(25) DEFAULT NULL,
   `addressMunicipality` varchar(25) NOT NULL,
-  `addressCity` varchar(25) NOT NULL DEFAULT '',
-  `emergencyRelationship` enum('Madre','Padre','Abuelo/a','Hermano/a','Nieto/a','Hijo/a','Esposo/a','Tio/a','Sobrino/a','Otros') NOT NULL,
+  `addressCity` varchar(25) NOT NULL,
+  `emergencyRelationship` enum('Madre','Padre','Abuelo/a','Hermano/a','Nieto/a','Hijo/a','Esposo/a','Tio/a','Sobrino/a','Otro') NOT NULL,
   `companionName` varchar(30) DEFAULT NULL,
   `companionPhone` varchar(15) DEFAULT NULL,
-  `companionRelationship` enum('Madre','Padre','Abuelo/a','Hermano/a','Nieto/a','Hijo/a','Esposo/a','Tio/a','Sobrino/a','Otros') DEFAULT NULL,
-  `idStudent` int(10) unsigned NOT NULL DEFAULT 0,
+  `companionRelationship` enum('Madre','Padre','Abuelo/a','Hermano/a','Nieto/a','Hijo/a','Esposo/a','Tio/a','Sobrino/a','Otro') NOT NULL,
+  `idStudent` int(10) unsigned NOT NULL,
   `idTeacher` int(10) unsigned NOT NULL,
+  `childPosition` int(10) unsigned DEFAULT NULL,
+  `habits` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`habits`)),
+  `ethnicity` enum('Wayuu','Añu','Bari','Yukpa','Japreria') DEFAULT NULL,
+  `addressState` varchar(25) NOT NULL,
   PRIMARY KEY (`id`) USING BTREE,
+  UNIQUE KEY `patientIdentificacion_patientCode` (`patientIdentificacion`,`patientCode`),
   KEY `historyIdStudent` (`idStudent`),
-  CONSTRAINT `historyIdStudent` FOREIGN KEY (`idStudent`) REFERENCES `users` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+  KEY `historyIdTeacher` (`idTeacher`),
+  CONSTRAINT `historyIdStudent` FOREIGN KEY (`idStudent`) REFERENCES `users` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `historyIdTeacher` FOREIGN KEY (`idTeacher`) REFERENCES `users` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 -- Volcando datos para la tabla faco_luz.patients: ~0 rows (aproximadamente)
@@ -209,7 +200,7 @@ CREATE TABLE IF NOT EXISTS `settings` (
   PRIMARY KEY (`label`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
--- Volcando datos para la tabla faco_luz.settings: ~1 rows (aproximadamente)
+-- Volcando datos para la tabla faco_luz.settings: ~0 rows (aproximadamente)
 INSERT INTO `settings` (`label`, `value`) VALUES
 	('startedPeriod', 0);
 
@@ -225,7 +216,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
--- Volcando datos para la tabla faco_luz.users: ~5 rows (aproximadamente)
+-- Volcando datos para la tabla faco_luz.users: ~1 rows (aproximadamente)
 INSERT INTO `users` (`id`, `name`, `lastname`, `passwordSHA256`, `type`, `identificationType`, `active`) VALUES
 	(1, 'admin', 'admin', '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918', 0, 0, 1);
 
