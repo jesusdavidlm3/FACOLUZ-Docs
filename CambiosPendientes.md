@@ -1,0 +1,21 @@
+Cambios pendientes:
+===================
+
+Pendientes por decidir:
+-----------------------
+* Como se actualizaran los datos como ocupacion, numeros de telefono, etc?
+* Antecedentes Familiares y padecimientos.
+    * Tipo de Hepatitis.
+
+Cambios para la version Preliminar:
+------------------------------------
+* Eliminar "numero de hijo" de todas las historias.
+* Eliminar cantidad de habitaciones de la vivienda.
+
+Cambios para la version definitiva:
+------------------------------------
+* Agregar paciente de alto riesgo a pacientes.
+
+Decidir Eliminacion:
+--------------------
+* Grado de instruccion del representante
