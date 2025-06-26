@@ -19,3 +19,8 @@ Cambios para la version definitiva:
 Decidir Eliminacion:
 --------------------
 * Grado de instruccion del representante
+
+Tareas pendientes:
+==================
+* Definir la lista de opciones para el estado de un diente en el odontograma
+* Codificar la estructura del JSON para el odontograma
