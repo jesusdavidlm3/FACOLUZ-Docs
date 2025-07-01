@@ -15,9 +15,6 @@ Cambios para la version definitiva:
 ------------------------------------
 * Agregar paciente de alto riesgo a pacientes.
 
-Decidir Eliminacion:
---------------------
-* Grado de instruccion del representante
 
 Tareas pendientes:
 ==================

@@ -51,7 +51,6 @@ CREATE TABLE IF NOT EXISTS `changelogs` (
 -- Volcando estructura para tabla faco_luz.childhistories
 CREATE TABLE IF NOT EXISTS `childhistories` (
   `patientId` uuid NOT NULL,
-  `childPosition` int(11) unsigned NOT NULL,
   `currentStudying` enum('Si','No') NOT NULL,
   `representativeName` varchar(25) NOT NULL,
   `representativeIdentification` varchar(15) NOT NULL,
@@ -179,7 +178,6 @@ CREATE TABLE IF NOT EXISTS `patients` (
   `companionRelationship` enum('Madre','Padre','Abuelo/a','Hermano/a','Nieto/a','Hijo/a','Esposo/a','Tio/a','Sobrino/a','Otro') NOT NULL,
   `idStudent` int(10) unsigned NOT NULL,
   `idTeacher` int(10) unsigned NOT NULL,
-  `childPosition` int(10) unsigned DEFAULT NULL,
   `habits` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`habits`)),
   `ethnicity` enum('Wayuu','Añu','Bari','Yukpa','Japreria') DEFAULT NULL,
   `addressState` varchar(25) NOT NULL,
