@@ -9,8 +9,7 @@ Pendientes por decidir:
 
 Cambios para la version Preliminar:
 ------------------------------------
-* Eliminar "numero de hijo" de todas las historias.
-* Eliminar cantidad de habitaciones de la vivienda.
+* 
 
 Cambios para la version definitiva:
 ------------------------------------
