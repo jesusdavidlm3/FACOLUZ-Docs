@@ -1,6 +1,10 @@
 Cambios pendientes:
 ===================
 
+Revisar:
+--------
+* consultations y citas tienen ambas patientId, deberia eliminarse?
+
 Pendientes por decidir:
 -----------------------
 * Como se actualizaran los datos como ocupacion, numeros de telefono, etc?
