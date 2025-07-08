@@ -26,6 +26,7 @@ CREATE TABLE IF NOT EXISTS `adulthistories` (
   `workType` varchar(30) DEFAULT NULL,
   `familyBurden` int(11) unsigned NOT NULL,
   `phone` varchar(15) NOT NULL,
+  `homeOwnership` enum('Familiar','Propia','Alquilada') NOT NULL,
   KEY `patientToAdultHistories` (`patientId`),
   CONSTRAINT `patientToAdultHistory` FOREIGN KEY (`patientId`) REFERENCES `patients` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
@@ -47,6 +48,11 @@ CREATE TABLE IF NOT EXISTS `changelogs` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 -- Volcando datos para la tabla faco_luz.changelogs: ~0 rows (aproximadamente)
+INSERT INTO `changelogs` (`id`, `changeType`, `dateTime`, `userModificatorId`, `userModificatedId`) VALUES
+	('e85beb67-57a7-4f0a-96aa-2dfc57490e82', 0, '2025-07-08 14:29:19', 1, 4),
+	('a5e05f34-6a78-43cb-bb2f-73e53d7a7a25', 0, '2025-07-08 14:29:09', 1, 3),
+	('87a098b6-40a2-41ce-9f33-8c6052940e60', 0, '2025-07-08 14:29:27', 1, 5),
+	('82f77958-313a-4cd6-8d0c-9f8eb43fb83e', 0, '2025-07-08 14:29:00', 1, 2);
 
 -- Volcando estructura para tabla faco_luz.childhistories
 CREATE TABLE IF NOT EXISTS `childhistories` (
@@ -93,19 +99,15 @@ CREATE TABLE IF NOT EXISTS `consultations` (
   `systolicPresure` int(11) NOT NULL,
   `diastolicPresure` int(11) NOT NULL,
   `BPM` int(11) NOT NULL,
-  `fisicConsistency` varchar(20) NOT NULL,
   `physicalExamination` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
   `intraoralExamination` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
   `gumEvaluation` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
   `dentalDiagram` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
   `childrenDentalDiagram` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
-  `individualForecast` varchar(50) NOT NULL,
-  `generalForecast` varchar(50) NOT NULL,
-  `physicalTest` varchar(50) NOT NULL,
-  `oclusionExamination` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL CHECK (json_valid(`oclusionExamination`)),
-  `complementaryTests` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL CHECK (json_valid(`complementaryTests`)),
-  `generalObservations` varchar(100) NOT NULL,
-  `pulpVitality` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL CHECK (json_valid(`pulpVitality`)),
+  `forecast` varchar(50) NOT NULL,
+  `complementaryTests` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL DEFAULT '',
+  `observations` varchar(100) NOT NULL,
+  `temp` decimal(2,2) NOT NULL DEFAULT 0.00,
   `pregnacy` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`pregnacy`)),
   `reactionToAnesthesia` enum('Si','No','No Sabe') NOT NULL,
   `reactionToAnesthesiaDesc` varchar(50) DEFAULT '',
@@ -216,7 +218,11 @@ CREATE TABLE IF NOT EXISTS `users` (
 
 -- Volcando datos para la tabla faco_luz.users: ~1 rows (aproximadamente)
 INSERT INTO `users` (`id`, `name`, `lastname`, `passwordSHA256`, `type`, `identificationType`, `active`) VALUES
-	(1, 'admin', 'admin', '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918', 0, 0, 1);
+	(1, 'admin', 'admin', '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918', 0, 0, 1),
+	(2, '2', '2', 'd4735e3a265e16eee03f59718b9b5d03019c07d8b6c51f90da3a666eec13ab35', 1, 1, 1),
+	(3, '3', '3', '4e07408562bedb8b60ce05c1decfe3ad16b72230967de01f640b7e4729b49fce', 2, 1, 1),
+	(4, '4', '4', '4b227777d4dd1fc61c6f884f48641d02b4d121d3fd328cb08b5531fcacdabf8a', 3, 1, 1),
+	(5, '5', '5', 'ef2d127de37b942baad06145e54b0c619a1f22327b2ebbcfbec78f5564afe39d', 4, 1, 1);
 
 /*!40103 SET TIME_ZONE=IFNULL(@OLD_TIME_ZONE, 'system') */;
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
