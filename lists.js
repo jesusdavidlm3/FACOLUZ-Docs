@@ -119,3 +119,60 @@ export const ethnicityList = [
     {label: "Japreria", value: 5},
     {label: "Otros", value: 6},
 ]
+
+export const menstruationCicle = [
+    {label: "Ausente", value: 1},
+    {label: "Normal", value: 2},
+    {label: "Abundante", value: 3},
+    {label: "Poco", value: 4},
+]
+
+export const gumEvaluationArea = [
+    {label: "Marginal y papilar", value: 1},
+    {label: "Difuso", value: 2}
+]
+
+export const gumEvaluationLocation = [
+    {label: "Generalizado", value: 1},
+    {label: "Localizado", value: 2},
+]
+
+export const gumColor = [
+    {label: "Rosado coral", value: 1},
+    {label: "Rojo intenso", value: 2},
+    {label: "Rojo Violaceo", value: 3},
+    {label: "Pigmentado", value: 4},
+]
+
+export const gumEnlargement = [
+    {label: "Ausente", value: 1},
+    {label: "Leve", value: 2},
+    {label: "moderado", value: 3},
+    {label: "Severo", value: 4},
+]
+
+export const gumTexture = [
+    {label: "Puntilado", value: 1},
+    {label: "Leve perdida de puntillado", value: 2},
+    {label: "Moderada perdida de puntillado", value: 3},
+    {label: "Exagerada perdida de puntillado", value: 4},
+]
+
+export const gumConsistency = [
+    {label: "Firme", value: 1},
+    {label: "Blanda y depresible", value: 2},
+    {label: "Fibrosa", value: 3},
+]
+
+export const gumPosition = [
+    {label: "Migracion apical", value: 1},
+    {label: "Migracion coronal", value: 2},
+]
+
+export const gumForm = [
+    {label: "Festoneada", value: 1},
+    {label: "Irregular", value: 2},
+    {label: "Perdida leve del festoneado", value: 3},
+    {label: "Perdida moderada del festoneado", value: 4},
+    {label: "Perdida exagerada del festoneado", value: 5},
+]

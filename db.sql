@@ -26,7 +26,6 @@ CREATE TABLE IF NOT EXISTS `adulthistories` (
   `workType` varchar(30) DEFAULT NULL,
   `familyBurden` int(11) unsigned NOT NULL,
   `phone` varchar(15) NOT NULL,
-  `homeOwnership` enum('Familiar','Propia','Alquilada') NOT NULL,
   KEY `patientToAdultHistories` (`patientId`),
   CONSTRAINT `patientToAdultHistory` FOREIGN KEY (`patientId`) REFERENCES `patients` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
@@ -62,7 +61,6 @@ CREATE TABLE IF NOT EXISTS `childhistories` (
   `representativeIdentification` varchar(15) NOT NULL,
   `representativePhone` varchar(15) NOT NULL,
   `representativeInstructionGrade` enum('Ninguno','Prescolar','Primaria','Bachillerato','Universitario','Postgrado') NOT NULL,
-  `homeOwnership` enum('Familiar','Propia','Alquilada') NOT NULL,
   `representativeWorking` enum('Si','No') NOT NULL,
   `representativeWorkType` varchar(50) DEFAULT NULL,
   `representativeFamilyBurden` int(11) unsigned NOT NULL DEFAULT 0,
@@ -183,6 +181,7 @@ CREATE TABLE IF NOT EXISTS `patients` (
   `habits` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`habits`)),
   `ethnicity` enum('Wayuu','Añu','Bari','Yukpa','Japreria') DEFAULT NULL,
   `addressState` varchar(25) NOT NULL,
+  `homeOwnership` enum('Familiar','Propia','Alquilada') NOT NULL,
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE KEY `patientIdentificacion_patientCode` (`patientIdentificacion`,`patientCode`),
   KEY `historyIdStudent` (`idStudent`),
