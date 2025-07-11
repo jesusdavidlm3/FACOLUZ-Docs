@@ -122,7 +122,7 @@ CREATE TABLE IF NOT EXISTS `dates` (
   `patientId` uuid DEFAULT NULL,
   `doctorId` int(10) unsigned DEFAULT NULL,
   `date` datetime DEFAULT NULL,
-  `status` int(11) DEFAULT NULL,
+  `status` enum('Pendiente', 'Atendida', 'Cancelada') DEFAULT 'Pendiente',
   PRIMARY KEY (`id`),
   KEY `patientOnDate` (`patientId`),
   KEY `doctorOnDate` (`doctorId`),
