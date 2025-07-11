@@ -175,7 +175,7 @@ CREATE TABLE IF NOT EXISTS `patients` (
   `emergencyRelationship` enum('Madre','Padre','Abuelo/a','Hermano/a','Nieto/a','Hijo/a','Esposo/a','Tio/a','Sobrino/a','Otro') NOT NULL,
   `companionName` varchar(30) DEFAULT NULL,
   `companionPhone` varchar(15) DEFAULT NULL,
-  `companionRelationship` enum('Madre','Padre','Abuelo/a','Hermano/a','Nieto/a','Hijo/a','Esposo/a','Tio/a','Sobrino/a','Otro') NOT NULL,
+  `companionRelationship` enum('Madre','Padre','Abuelo/a','Hermano/a','Nieto/a','Hijo/a','Esposo/a','Tio/a','Sobrino/a','Otro') DEFAULT NULL,
   `idStudent` int(10) unsigned NOT NULL,
   `idTeacher` int(10) unsigned NOT NULL,
   `habits` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`habits`)),
