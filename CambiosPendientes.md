@@ -1,5 +1,11 @@
 Tareas pendientes:
 ==================
+* Limitar la fecha de la creacion de historia, el rango de menor de edad y mayor de edad (Recepcion)
+* Añadir filtro para ver las historias segun el estado de la cita
+* Cambiar el estilo del inicio de sesion
+* Reorganizar la cars de la consulta
+* Agregar la informacion de desarrollo (Acerca de)
+* 
 * Definir la lista de opciones para el estado de un diente en el odontograma
 * Codificar la estructura del JSON para el odontograma
 * asignar ancho maximo a seleccion de padecimientos en las historias.
