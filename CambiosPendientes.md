@@ -27,3 +27,4 @@ Como resolver:
 Para la version 2:
 ==================
 * Examen de oclusion de las historias infantiles
+* Modulo de caja para administracion
