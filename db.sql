@@ -20,6 +20,7 @@
 -- Table structure for table `adulthistories`
 --
 
+DROP TABLE IF EXISTS `adulthistories`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8mb4 */;
 CREATE TABLE `adulthistories` (
@@ -46,6 +47,7 @@ UNLOCK TABLES;
 -- Table structure for table `changelogs`
 --
 
+DROP TABLE IF EXISTS `changelogs`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8mb4 */;
 CREATE TABLE `changelogs` (
@@ -90,6 +92,7 @@ UNLOCK TABLES;
 -- Table structure for table `childhistories`
 --
 
+DROP TABLE IF EXISTS `childhistories`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8mb4 */;
 CREATE TABLE `childhistories` (
@@ -124,6 +127,7 @@ UNLOCK TABLES;
 -- Table structure for table `clases`
 --
 
+DROP TABLE IF EXISTS `clases`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8mb4 */;
 CREATE TABLE `clases` (
@@ -131,7 +135,6 @@ CREATE TABLE `clases` (
   `asignature` varchar(5) NOT NULL,
   `userId` int(10) unsigned NOT NULL,
   `role` tinyint(4) NOT NULL,
-  `periodo` enum('1','2') NOT NULL,
   `year` int(4) NOT NULL,
   KEY `FK_classes_users_2` (`userId`) USING BTREE,
   CONSTRAINT `userToClases` FOREIGN KEY (`userId`) REFERENCES `users` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
@@ -144,6 +147,9 @@ CREATE TABLE `clases` (
 
 LOCK TABLES `clases` WRITE;
 /*!40000 ALTER TABLE `clases` DISABLE KEYS */;
+INSERT INTO `clases` VALUES
+('001','PP3',3,2,2026),
+('001','PP3',88266,1,2026);
 /*!40000 ALTER TABLE `clases` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -151,6 +157,7 @@ UNLOCK TABLES;
 -- Table structure for table `consultations`
 --
 
+DROP TABLE IF EXISTS `consultations`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8mb4 */;
 CREATE TABLE `consultations` (
@@ -194,6 +201,7 @@ UNLOCK TABLES;
 -- Table structure for table `dates`
 --
 
+DROP TABLE IF EXISTS `dates`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8mb4 */;
 CREATE TABLE `dates` (
@@ -202,9 +210,12 @@ CREATE TABLE `dates` (
   `doctorId` int(10) unsigned DEFAULT NULL,
   `date` datetime DEFAULT NULL,
   `status` enum('Pendiente','Atendida','Cancelada') NOT NULL DEFAULT 'Pendiente',
+  `invoiceId` uuid NOT NULL,
   PRIMARY KEY (`id`),
   KEY `patientOnDate` (`patientId`),
   KEY `doctorOnDate` (`doctorId`),
+  KEY `dates_invoices_FK` (`invoiceId`),
+  CONSTRAINT `dates_invoices_FK` FOREIGN KEY (`invoiceId`) REFERENCES `invoices` (`id`),
   CONSTRAINT `doctorOnDate` FOREIGN KEY (`doctorId`) REFERENCES `users` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `patientOnDate` FOREIGN KEY (`patientId`) REFERENCES `patients` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
@@ -223,6 +234,7 @@ UNLOCK TABLES;
 -- Table structure for table `evaluations`
 --
 
+DROP TABLE IF EXISTS `evaluations`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8mb4 */;
 CREATE TABLE `evaluations` (
@@ -251,9 +263,39 @@ LOCK TABLES `evaluations` WRITE;
 UNLOCK TABLES;
 
 --
+-- Table structure for table `invoices`
+--
+
+DROP TABLE IF EXISTS `invoices`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
+CREATE TABLE `invoices` (
+  `id` uuid NOT NULL DEFAULT uuid(),
+  `billableitem` enum('Cirugia','Endodoncia','Ortodoncia') NOT NULL,
+  `currency` enum('Dolares','Bolivares') NOT NULL,
+  `reference` varchar(100) DEFAULT NULL,
+  `payerId` int(11) NOT NULL,
+  `date` datetime NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`id`),
+  KEY `invoices_payer_FK` (`payerId`),
+  CONSTRAINT `invoices_payer_FK` FOREIGN KEY (`payerId`) REFERENCES `payer` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `invoices`
+--
+
+LOCK TABLES `invoices` WRITE;
+/*!40000 ALTER TABLE `invoices` DISABLE KEYS */;
+/*!40000 ALTER TABLE `invoices` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `patients`
 --
 
+DROP TABLE IF EXISTS `patients`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8mb4 */;
 CREATE TABLE `patients` (
@@ -306,9 +348,33 @@ LOCK TABLES `patients` WRITE;
 UNLOCK TABLES;
 
 --
+-- Table structure for table `payer`
+--
+
+DROP TABLE IF EXISTS `payer`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
+CREATE TABLE `payer` (
+  `id` int(11) NOT NULL,
+  `name` varchar(50) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `payer`
+--
+
+LOCK TABLES `payer` WRITE;
+/*!40000 ALTER TABLE `payer` DISABLE KEYS */;
+/*!40000 ALTER TABLE `payer` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `settings`
 --
 
+DROP TABLE IF EXISTS `settings`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8mb4 */;
 CREATE TABLE `settings` (
@@ -325,6 +391,9 @@ CREATE TABLE `settings` (
 LOCK TABLES `settings` WRITE;
 /*!40000 ALTER TABLE `settings` DISABLE KEYS */;
 INSERT INTO `settings` VALUES
+('currencyRate',244),
+('datePrice',5),
+('historyPrice',5),
 ('startedPeriod',0);
 /*!40000 ALTER TABLE `settings` ENABLE KEYS */;
 UNLOCK TABLES;
@@ -333,6 +402,7 @@ UNLOCK TABLES;
 -- Table structure for table `users`
 --
 
+DROP TABLE IF EXISTS `users`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8mb4 */;
 CREATE TABLE `users` (
@@ -362,7 +432,7 @@ INSERT INTO `users` VALUES
 (7788,'Cesar','Moreno','03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4',3,1,1),
 (8877,'David','Garcia','03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4',1,2,0),
 (88266,'Jose','Garcia','03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4',1,1,1),
-(282882,'Jesus','Lozano','03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4',2,2,1),
+(282882,'Jesus','Lozano','03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4',5,2,1),
 (444466,'Samuel','Chourio','03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4',2,1,1),
 (7667655,'Maria','V','03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4',2,1,1),
 (7736559,'Juan','M','03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4',4,1,1),
@@ -383,4 +453,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*M!100616 SET NOTE_VERBOSITY=@OLD_NOTE_VERBOSITY */;
 
--- Dump completed on 2025-10-30 18:22:48
+-- Dump completed on 2025-11-27 21:57:47
