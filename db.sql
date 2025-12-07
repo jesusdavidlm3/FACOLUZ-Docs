@@ -272,13 +272,15 @@ DROP TABLE IF EXISTS `invoices`;
 CREATE TABLE `invoices` (
   `id` uuid NOT NULL DEFAULT uuid(),
   `billableitem` enum('Cirugia','Endodoncia','Ortodoncia') NOT NULL,
-  `currency` enum('Dolares','Bolivares') NOT NULL,
+  `currency` enum('Bolivares en efectivo','Bolivares en transferencia','Dolares en efectivo','Exoneracion') NOT NULL,
   `reference` varchar(100) DEFAULT NULL,
-  `payerId` int(11) NOT NULL,
   `date` datetime NOT NULL DEFAULT current_timestamp(),
-  PRIMARY KEY (`id`),
-  KEY `invoices_payer_FK` (`payerId`),
-  CONSTRAINT `invoices_payer_FK` FOREIGN KEY (`payerId`) REFERENCES `payer` (`id`)
+  `patientId` int(11) NOT NULL,
+  `patientName` varchar(100) NOT NULL,
+  `patientPhone` varchar(15) NOT NULL,
+  `amount` float NOT NULL,
+  `changeRate` float NOT NULL,
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -345,29 +347,6 @@ CREATE TABLE `patients` (
 LOCK TABLES `patients` WRITE;
 /*!40000 ALTER TABLE `patients` DISABLE KEYS */;
 /*!40000 ALTER TABLE `patients` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `payer`
---
-
-DROP TABLE IF EXISTS `payer`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8mb4 */;
-CREATE TABLE `payer` (
-  `id` int(11) NOT NULL,
-  `name` varchar(50) NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `payer`
---
-
-LOCK TABLES `payer` WRITE;
-/*!40000 ALTER TABLE `payer` DISABLE KEYS */;
-/*!40000 ALTER TABLE `payer` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -453,4 +432,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*M!100616 SET NOTE_VERBOSITY=@OLD_NOTE_VERBOSITY */;
 
--- Dump completed on 2025-11-27 21:57:47
+-- Dump completed on 2025-12-07 14:35:37
