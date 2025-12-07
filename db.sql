@@ -271,7 +271,7 @@ DROP TABLE IF EXISTS `invoices`;
 /*!40101 SET character_set_client = utf8mb4 */;
 CREATE TABLE `invoices` (
   `id` uuid NOT NULL DEFAULT uuid(),
-  `billableitem` enum('Cirugia','Endodoncia','Ortodoncia') NOT NULL,
+  `billableitem` enum('Cirugia','Endodoncia','Ortodoncia','Peridoncia','Protesis Total','Protesis parcial removible','Protesis parcial fija','CIA','CIAN','Emergencia de CIA','Emergencia de CIAN') NOT NULL,
   `currency` enum('Bolivares en efectivo','Bolivares en transferencia','Dolares en efectivo','Exoneracion') NOT NULL,
   `reference` varchar(100) DEFAULT NULL,
   `date` datetime NOT NULL DEFAULT current_timestamp(),
@@ -290,6 +290,12 @@ CREATE TABLE `invoices` (
 
 LOCK TABLES `invoices` WRITE;
 /*!40000 ALTER TABLE `invoices` DISABLE KEYS */;
+INSERT INTO `invoices` VALUES
+('2e2a1021-d3c1-11f0-a9b0-106530499799','Endodoncia','Dolares en efectivo','','2025-12-07 19:04:52',1121,'Samuel','0444',5,257.93),
+('c0c4c7b5-d3c1-11f0-a9b0-106530499799','CIAN','Exoneracion','','2025-12-07 19:08:58',88789,'David','009886',1289.65,257.93),
+('cfa0de42-d3c1-11f0-a9b0-106530499799','Emergencia de CIAN','Exoneracion','','2025-12-07 19:09:23',88878,'Cesar','05562',1289.65,257.93),
+('f124b7d0-d3c1-11f0-a9b0-106530499799','CIA','Bolivares en transferencia','88888','2025-12-07 19:10:19',28288269,'Jesus','0412',1289.65,257.93),
+('f8d3fc18-d3c1-11f0-a9b0-106530499799','Cirugia','Dolares en efectivo','','2025-12-07 19:10:32',28288269,'Jesus','0412',5,257.93);
 /*!40000 ALTER TABLE `invoices` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -432,4 +438,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*M!100616 SET NOTE_VERBOSITY=@OLD_NOTE_VERBOSITY */;
 
--- Dump completed on 2025-12-07 14:35:37
+-- Dump completed on 2025-12-07 19:26:25
