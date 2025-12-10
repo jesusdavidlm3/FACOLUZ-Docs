@@ -280,6 +280,7 @@ CREATE TABLE `invoices` (
   `patientPhone` varchar(15) NOT NULL,
   `amount` float NOT NULL,
   `changeRate` float NOT NULL,
+  `status` varchar(20) NOT NULL DEFAULT 'Por verificar',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
