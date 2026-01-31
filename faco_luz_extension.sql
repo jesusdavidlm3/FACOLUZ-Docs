@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 27-01-2026 a las 19:11:36
+-- Tiempo de generación: 31-01-2026 a las 16:27:54
 -- Versión del servidor: 11.8.2-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -44,7 +44,7 @@ CREATE TABLE `changelogs` (
 CREATE TABLE `courses` (
   `id` int(2) NOT NULL,
   `description` text DEFAULT NULL,
-  `state` enum('Activo','Inactivo','Cancelado') DEFAULT NULL,
+  `state` enum('Activo','Inactivo') DEFAULT NULL,
   `create_at` datetime DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -65,11 +65,22 @@ CREATE TABLE `enrollments` (
 -- --------------------------------------------------------
 
 --
+-- Estructura de tabla para la tabla `enrollments_modules`
+--
+
+CREATE TABLE `enrollments_modules` (
+  `enrollmentId` uuid NOT NULL,
+  `moduleId` int(5) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Estructura de tabla para la tabla `modules`
 --
 
 CREATE TABLE `modules` (
-  `id` int(4) NOT NULL,
+  `id` int(5) NOT NULL,
   `description` text DEFAULT NULL,
   `courseId` int(2) DEFAULT NULL,
   `create_at` datetime DEFAULT current_timestamp(),
@@ -84,8 +95,8 @@ CREATE TABLE `modules` (
 
 CREATE TABLE `periods` (
   `id` uuid NOT NULL,
-  `age` int(4) NOT NULL,
-  `period` uuid NOT NULL,
+  `year` int(4) NOT NULL,
+  `period` int(2) NOT NULL,
   `dateStart` date NOT NULL,
   `dateEnd` date DEFAULT NULL,
   `create_at` datetime DEFAULT current_timestamp(),
@@ -171,6 +182,13 @@ ALTER TABLE `enrollments`
   ADD KEY `fk_period_enrollment` (`periodId`);
 
 --
+-- Indices de la tabla `enrollments_modules`
+--
+ALTER TABLE `enrollments_modules`
+  ADD KEY `fk_enrollment` (`enrollmentId`),
+  ADD KEY `fk_module` (`moduleId`);
+
+--
 -- Indices de la tabla `modules`
 --
 ALTER TABLE `modules`
@@ -181,8 +199,7 @@ ALTER TABLE `modules`
 -- Indices de la tabla `periods`
 --
 ALTER TABLE `periods`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `fk_period` (`period`);
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indices de la tabla `scores`
@@ -215,12 +232,6 @@ ALTER TABLE `courses`
   MODIFY `id` int(2) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT de la tabla `modules`
---
-ALTER TABLE `modules`
-  MODIFY `id` int(4) NOT NULL AUTO_INCREMENT;
-
---
 -- Restricciones para tablas volcadas
 --
 
@@ -232,16 +243,17 @@ ALTER TABLE `enrollments`
   ADD CONSTRAINT `fk_student_enrollment` FOREIGN KEY (`studentsId`) REFERENCES `students` (`id`);
 
 --
+-- Filtros para la tabla `enrollments_modules`
+--
+ALTER TABLE `enrollments_modules`
+  ADD CONSTRAINT `fk_enrollment` FOREIGN KEY (`enrollmentId`) REFERENCES `enrollments` (`id`),
+  ADD CONSTRAINT `fk_module` FOREIGN KEY (`moduleId`) REFERENCES `modules` (`id`);
+
+--
 -- Filtros para la tabla `modules`
 --
 ALTER TABLE `modules`
   ADD CONSTRAINT `fk_course` FOREIGN KEY (`courseId`) REFERENCES `courses` (`id`) ON DELETE SET NULL ON UPDATE CASCADE;
-
---
--- Filtros para la tabla `periods`
---
-ALTER TABLE `periods`
-  ADD CONSTRAINT `fk_period` FOREIGN KEY (`period`) REFERENCES `periods` (`id`) ON DELETE NO ACTION ON UPDATE CASCADE;
 
 --
 -- Filtros para la tabla `scores`
