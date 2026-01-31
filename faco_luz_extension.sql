@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 31-01-2026 a las 16:27:54
+-- Tiempo de generación: 31-01-2026 a las 18:59:45
 -- Versión del servidor: 11.8.2-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -28,7 +28,7 @@ SET time_zone = "+00:00";
 --
 
 CREATE TABLE `changelogs` (
-  `id` uuid NOT NULL,
+  `id` uuid NOT NULL DEFAULT uuid(),
   `changeType` int(11) NOT NULL,
   `dateTime` datetime NOT NULL,
   `userModificatorId` int(15) UNSIGNED NOT NULL,
@@ -43,9 +43,9 @@ CREATE TABLE `changelogs` (
 
 CREATE TABLE `courses` (
   `id` int(2) NOT NULL,
-  `description` text DEFAULT NULL,
-  `state` enum('Activo','Inactivo') DEFAULT NULL,
-  `create_at` datetime DEFAULT current_timestamp()
+  `description` text NOT NULL,
+  `state` enum('Activo','Inactivo') NOT NULL DEFAULT 'Activo',
+  `create_at` datetime NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -55,11 +55,11 @@ CREATE TABLE `courses` (
 --
 
 CREATE TABLE `enrollments` (
-  `id` uuid NOT NULL,
+  `id` uuid NOT NULL DEFAULT uuid(),
   `studentsId` uuid NOT NULL,
   `periodId` uuid NOT NULL,
   `dateEnrollments` datetime NOT NULL,
-  `state` enum('Pagada','Deuda') DEFAULT NULL
+  `state` enum('Pagada','Deuda') NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -76,15 +76,33 @@ CREATE TABLE `enrollments_modules` (
 -- --------------------------------------------------------
 
 --
+-- Estructura de tabla para la tabla `invoices`
+--
+
+CREATE TABLE `invoices` (
+  `id` uuid NOT NULL DEFAULT uuid(),
+  `billableitem` enum('Cirugia','Endodoncia','Ortodoncia','Peridoncia','Protesis Total','Protesis parcial removible','Protesis parcial fija','CIA','CIAN','Emergencia de CIA','Emergencia de CIAN') NOT NULL,
+  `currency` enum('Bolivares en efectivo','Bolivares en transferencia','Dolares en efectivo','Exoneracion') NOT NULL,
+  `reference` varchar(100) DEFAULT NULL,
+  `date` datetime NOT NULL DEFAULT current_timestamp(),
+  `studentId` uuid NOT NULL,
+  `amount` float NOT NULL,
+  `changeRate` float NOT NULL,
+  `status` enum('Pendiente','Recibida','Rechazada') NOT NULL DEFAULT 'Pendiente'
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Estructura de tabla para la tabla `modules`
 --
 
 CREATE TABLE `modules` (
   `id` int(5) NOT NULL,
-  `description` text DEFAULT NULL,
-  `courseId` int(2) DEFAULT NULL,
-  `create_at` datetime DEFAULT current_timestamp(),
-  `state` enum('Activo','Inactivo') DEFAULT NULL
+  `description` text NOT NULL,
+  `courseId` int(2) NOT NULL,
+  `create_at` datetime NOT NULL DEFAULT current_timestamp(),
+  `state` enum('Activo','Inactivo') NOT NULL DEFAULT 'Activo'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -94,13 +112,13 @@ CREATE TABLE `modules` (
 --
 
 CREATE TABLE `periods` (
-  `id` uuid NOT NULL,
+  `id` uuid NOT NULL DEFAULT uuid(),
   `year` int(4) NOT NULL,
   `period` int(2) NOT NULL,
-  `dateStart` date NOT NULL,
-  `dateEnd` date DEFAULT NULL,
-  `create_at` datetime DEFAULT current_timestamp(),
-  `state` enum('En curso','Finalizado') DEFAULT NULL
+  `startDate` date NOT NULL,
+  `endDate` date NOT NULL,
+  `create_at` datetime NOT NULL DEFAULT current_timestamp(),
+  `state` enum('En curso','Finalizado') NOT NULL DEFAULT 'En curso'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -122,17 +140,18 @@ CREATE TABLE `scores` (
 --
 
 CREATE TABLE `students` (
-  `id` uuid NOT NULL,
+  `id` uuid NOT NULL DEFAULT uuid(),
   `name` varchar(20) NOT NULL,
   `lastname` varchar(20) NOT NULL,
+  `photo` text NOT NULL,
   `studentsId` int(8) NOT NULL,
   `birthDate` date NOT NULL,
   `email` varchar(100) NOT NULL,
   `phone` int(11) NOT NULL,
   `address` text NOT NULL,
-  `instructionGrade` enum('Ninguno','Prescolar','Primaria','Bachillerato','Universitario','Postgrado') DEFAULT NULL,
+  `instructionGrade` enum('Ninguno','Prescolar','Primaria','Bachillerato','Universitario','Postgrado') NOT NULL,
   `created_at` datetime NOT NULL DEFAULT current_timestamp(),
-  `state` enum('Activo','Desertor','Completado') NOT NULL
+  `state` enum('Activo','Inactivo') NOT NULL DEFAULT 'Activo'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -187,6 +206,12 @@ ALTER TABLE `enrollments`
 ALTER TABLE `enrollments_modules`
   ADD KEY `fk_enrollment` (`enrollmentId`),
   ADD KEY `fk_module` (`moduleId`);
+
+--
+-- Indices de la tabla `invoices`
+--
+ALTER TABLE `invoices`
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indices de la tabla `modules`
@@ -253,7 +278,7 @@ ALTER TABLE `enrollments_modules`
 -- Filtros para la tabla `modules`
 --
 ALTER TABLE `modules`
-  ADD CONSTRAINT `fk_course` FOREIGN KEY (`courseId`) REFERENCES `courses` (`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+  ADD CONSTRAINT `fk_course` FOREIGN KEY (`courseId`) REFERENCES `courses` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Filtros para la tabla `scores`
