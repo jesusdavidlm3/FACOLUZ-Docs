@@ -1,129 +1,91 @@
-/*M!999999\- enable the sandbox mode */ 
--- MariaDB dump 10.19-11.7.2-MariaDB, for Win64 (AMD64)
+-- phpMyAdmin SQL Dump
+-- version 5.2.1
+-- https://www.phpmyadmin.net/
 --
--- Host: localhost    Database: faco_luz_extension
--- ------------------------------------------------------
--- Server version	12.1.2-MariaDB
+-- Servidor: 127.0.0.1
+-- Tiempo de generación: 06-02-2026 a las 20:12:20
+-- Versión del servidor: 11.8.2-MariaDB
+-- Versión de PHP: 8.2.12
+
+SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+START TRANSACTION;
+SET time_zone = "+00:00";
+
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
 /*!40101 SET NAMES utf8mb4 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
-/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
-/*M!100616 SET @OLD_NOTE_VERBOSITY=@@NOTE_VERBOSITY, NOTE_VERBOSITY=0 */;
 
 --
--- Table structure for table `changelogs`
+-- Base de datos: `faco_luz_extension`
 --
 
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8mb4 */;
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `changelogs`
+--
+
 CREATE TABLE `changelogs` (
   `id` uuid NOT NULL DEFAULT uuid(),
   `changeType` int(11) NOT NULL,
   `dateTime` datetime NOT NULL,
-  `userModificatorId` int(15) unsigned NOT NULL,
-  `userModificatedId` int(15) unsigned NOT NULL
+  `userModificatorId` int(15) UNSIGNED NOT NULL,
+  `userModificatedId` int(15) UNSIGNED NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
+
+-- --------------------------------------------------------
 
 --
--- Dumping data for table `changelogs`
+-- Estructura de tabla para la tabla `courses`
 --
 
-LOCK TABLES `changelogs` WRITE;
-/*!40000 ALTER TABLE `changelogs` DISABLE KEYS */;
-/*!40000 ALTER TABLE `changelogs` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `courses`
---
-
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8mb4 */;
 CREATE TABLE `courses` (
-  `id` int(2) NOT NULL AUTO_INCREMENT,
+  `id` int(2) NOT NULL,
   `description` text NOT NULL,
   `state` enum('Activo','Inactivo') NOT NULL DEFAULT 'Activo',
-  `create_at` datetime NOT NULL DEFAULT current_timestamp(),
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
+  `create_at` datetime NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `courses`
+-- Volcado de datos para la tabla `courses`
 --
 
-LOCK TABLES `courses` WRITE;
-/*!40000 ALTER TABLE `courses` DISABLE KEYS */;
-/*!40000 ALTER TABLE `courses` ENABLE KEYS */;
-UNLOCK TABLES;
+INSERT INTO `courses` (`id`, `description`, `state`, `create_at`) VALUES
+(1, 'Asistente de Higienista Dental', 'Activo', '2026-02-06 14:28:06');
+
+-- --------------------------------------------------------
 
 --
--- Table structure for table `enrollments`
+-- Estructura de tabla para la tabla `enrollments`
 --
 
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8mb4 */;
 CREATE TABLE `enrollments` (
   `id` uuid NOT NULL DEFAULT uuid(),
-  `studentsId` uuid NOT NULL,
+  `studentId` uuid NOT NULL,
   `periodId` uuid NOT NULL,
   `dateEnrollments` datetime NOT NULL,
-  `state` enum('Pagada','Deuda') NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `fk_student_enrollment` (`studentsId`),
-  KEY `fk_period_enrollment` (`periodId`),
-  CONSTRAINT `fk_period_enrollment` FOREIGN KEY (`periodId`) REFERENCES `periods` (`id`),
-  CONSTRAINT `fk_student_enrollment` FOREIGN KEY (`studentsId`) REFERENCES `students` (`id`)
+  `state` enum('Pagada','Deuda') NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
+
+-- --------------------------------------------------------
 
 --
--- Dumping data for table `enrollments`
+-- Estructura de tabla para la tabla `enrollments_modules`
 --
 
-LOCK TABLES `enrollments` WRITE;
-/*!40000 ALTER TABLE `enrollments` DISABLE KEYS */;
-/*!40000 ALTER TABLE `enrollments` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `enrollments_modules`
---
-
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8mb4 */;
 CREATE TABLE `enrollments_modules` (
   `enrollmentId` uuid NOT NULL,
-  `moduleId` int(5) NOT NULL,
-  KEY `fk_enrollment` (`enrollmentId`),
-  KEY `fk_module` (`moduleId`),
-  CONSTRAINT `fk_enrollment` FOREIGN KEY (`enrollmentId`) REFERENCES `enrollments` (`id`),
-  CONSTRAINT `fk_module` FOREIGN KEY (`moduleId`) REFERENCES `modules` (`id`)
+  `moduleId` int(5) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
+
+-- --------------------------------------------------------
 
 --
--- Dumping data for table `enrollments_modules`
+-- Estructura de tabla para la tabla `invoices`
 --
 
-LOCK TABLES `enrollments_modules` WRITE;
-/*!40000 ALTER TABLE `enrollments_modules` DISABLE KEYS */;
-/*!40000 ALTER TABLE `enrollments_modules` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `invoices`
---
-
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8mb4 */;
 CREATE TABLE `invoices` (
   `id` uuid NOT NULL DEFAULT uuid(),
   `billableitem` enum('Cirugia','Endodoncia','Ortodoncia','Peridoncia','Protesis Total','Protesis parcial removible','Protesis parcial fija','CIA','CIAN','Emergencia de CIA','Emergencia de CIAN') NOT NULL,
@@ -133,75 +95,83 @@ CREATE TABLE `invoices` (
   `studentId` uuid NOT NULL,
   `amount` float NOT NULL,
   `changeRate` float NOT NULL,
-  `status` enum('Pendiente','Recibida','Rechazada') NOT NULL DEFAULT 'Pendiente',
-  PRIMARY KEY (`id`)
+  `status` enum('Pendiente','Recibida','Rechazada') NOT NULL DEFAULT 'Pendiente'
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
+
+-- --------------------------------------------------------
 
 --
--- Dumping data for table `invoices`
+-- Estructura de tabla para la tabla `modules`
 --
 
-LOCK TABLES `invoices` WRITE;
-/*!40000 ALTER TABLE `invoices` DISABLE KEYS */;
-/*!40000 ALTER TABLE `invoices` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `modules`
---
-
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8mb4 */;
 CREATE TABLE `modules` (
-  `id` int(5) NOT NULL AUTO_INCREMENT,
+  `id` int(5) NOT NULL,
   `description` text NOT NULL,
   `create_at` datetime NOT NULL DEFAULT current_timestamp(),
-  `state` enum('Activo','Inactivo') NOT NULL DEFAULT 'Activo',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
+  `state` enum('Activo','Inactivo') NOT NULL DEFAULT 'Activo'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `modules`
+-- Volcado de datos para la tabla `modules`
 --
 
-LOCK TABLES `modules` WRITE;
-/*!40000 ALTER TABLE `modules` DISABLE KEYS */;
-/*!40000 ALTER TABLE `modules` ENABLE KEYS */;
-UNLOCK TABLES;
+INSERT INTO `modules` (`id`, `description`, `create_at`, `state`) VALUES
+(1, 'Nociones basicas de la Anatomia Dental y Oclusion', '2026-02-06 14:24:09', 'Activo'),
+(2, 'Realaciones Humanas', '2026-02-06 14:24:09', 'Activo'),
+(3, 'Sistema de Atencion Odontologica', '2026-02-06 14:24:09', 'Activo'),
+(4, 'Semiologia e Historia Clinica', '2026-02-06 14:24:09', 'Activo'),
+(5, 'Bioetica y Odontologia Legal', '2026-02-06 14:24:09', 'Activo'),
+(6, 'Bioseguridad y Esterilizacion en Odontologia', '2026-02-06 14:24:09', 'Activo'),
+(7, 'Practica Profesional I', '2026-02-06 14:24:09', 'Activo'),
+(8, 'Asistencia de Procedimientos Clincos Odontologicos', '2026-02-06 14:24:09', 'Activo'),
+(9, 'Biomateriales Odontologicos', '2026-02-06 14:24:09', 'Activo'),
+(10, 'Nociones Basicas en Radiologia e Imagenologia Odontologica', '2026-02-06 14:24:09', 'Activo'),
+(11, 'Epidemiologia y Sistema de informacion', '2026-02-06 14:24:09', 'Activo'),
+(12, 'Ingles Intrumental', '2026-02-06 14:24:09', 'Activo'),
+(13, 'Educacion y Promocion de la Salud Bucal', '2026-02-06 14:24:09', 'Activo'),
+(14, 'Fotografia Clinica y Marketing en Odontologia', '2026-02-06 14:24:09', 'Activo'),
+(15, 'Practica Profesional II', '2026-02-06 14:24:09', 'Activo'),
+(16, 'Servicios Comunitario', '2026-02-06 14:24:09', 'Activo');
+
+-- --------------------------------------------------------
 
 --
--- Table structure for table `modules_courses`
+-- Estructura de tabla para la tabla `modules_courses`
 --
 
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8mb4 */;
 CREATE TABLE `modules_courses` (
   `moduleid` int(11) NOT NULL,
-  `courseid` int(11) NOT NULL,
-  KEY `modules_courses_courses_FK` (`courseid`),
-  KEY `modules_courses_modules_FK` (`moduleid`),
-  CONSTRAINT `modules_courses_courses_FK` FOREIGN KEY (`courseid`) REFERENCES `courses` (`id`),
-  CONSTRAINT `modules_courses_modules_FK` FOREIGN KEY (`moduleid`) REFERENCES `modules` (`id`)
+  `courseid` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `modules_courses`
+-- Volcado de datos para la tabla `modules_courses`
 --
 
-LOCK TABLES `modules_courses` WRITE;
-/*!40000 ALTER TABLE `modules_courses` DISABLE KEYS */;
-/*!40000 ALTER TABLE `modules_courses` ENABLE KEYS */;
-UNLOCK TABLES;
+INSERT INTO `modules_courses` (`moduleid`, `courseid`) VALUES
+(1, 1),
+(2, 1),
+(3, 1),
+(4, 1),
+(5, 1),
+(6, 1),
+(7, 1),
+(8, 1),
+(9, 1),
+(10, 1),
+(11, 1),
+(12, 1),
+(13, 1),
+(14, 1),
+(15, 1),
+(16, 1);
+
+-- --------------------------------------------------------
 
 --
--- Table structure for table `periods`
+-- Estructura de tabla para la tabla `periods`
 --
 
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8mb4 */;
 CREATE TABLE `periods` (
   `id` uuid NOT NULL DEFAULT uuid(),
   `year` int(4) NOT NULL,
@@ -209,124 +179,189 @@ CREATE TABLE `periods` (
   `startDate` date NOT NULL,
   `endDate` date NOT NULL,
   `create_at` datetime NOT NULL DEFAULT current_timestamp(),
-  `state` enum('En curso','Finalizado') NOT NULL DEFAULT 'En curso',
-  PRIMARY KEY (`id`)
+  `state` enum('En curso','Finalizado') NOT NULL DEFAULT 'En curso'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
+
+-- --------------------------------------------------------
 
 --
--- Dumping data for table `periods`
+-- Estructura de tabla para la tabla `scores`
 --
 
-LOCK TABLES `periods` WRITE;
-/*!40000 ALTER TABLE `periods` DISABLE KEYS */;
-/*!40000 ALTER TABLE `periods` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `scores`
---
-
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8mb4 */;
 CREATE TABLE `scores` (
   `studentsId` int(8) DEFAULT NULL,
   `moduleId` int(4) DEFAULT NULL,
-  `score` int(2) DEFAULT NULL,
-  KEY `fk_student_scores` (`studentsId`),
-  KEY `fk_module_scores` (`moduleId`),
-  CONSTRAINT `fk_module_scores` FOREIGN KEY (`moduleId`) REFERENCES `modules` (`id`),
-  CONSTRAINT `fk_student_scores` FOREIGN KEY (`studentsId`) REFERENCES `students` (`studentsId`) ON UPDATE CASCADE
+  `score` int(2) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
+
+-- --------------------------------------------------------
 
 --
--- Dumping data for table `scores`
+-- Estructura de tabla para la tabla `students`
 --
 
-LOCK TABLES `scores` WRITE;
-/*!40000 ALTER TABLE `scores` DISABLE KEYS */;
-/*!40000 ALTER TABLE `scores` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `students`
---
-
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8mb4 */;
 CREATE TABLE `students` (
   `id` uuid NOT NULL DEFAULT uuid(),
   `name` varchar(20) NOT NULL,
   `lastname` varchar(20) NOT NULL,
   `photo` text NOT NULL,
-  `studentsId` int(8) NOT NULL,
+  `studentId` int(8) NOT NULL,
   `birthDate` date NOT NULL,
   `email` varchar(100) NOT NULL,
   `phone` int(11) NOT NULL,
   `address` text NOT NULL,
   `instructionGrade` enum('Ninguno','Prescolar','Primaria','Bachillerato','Universitario','Postgrado') NOT NULL,
   `created_at` datetime NOT NULL DEFAULT current_timestamp(),
-  `state` enum('Activo','Inactivo') NOT NULL DEFAULT 'Activo',
-  PRIMARY KEY (`id`),
-  KEY `studentsId` (`studentsId`)
+  `state` enum('Activo','Inactivo') NOT NULL DEFAULT 'Activo'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
+
+-- --------------------------------------------------------
 
 --
--- Dumping data for table `students`
+-- Estructura de tabla para la tabla `users`
 --
 
-LOCK TABLES `students` WRITE;
-/*!40000 ALTER TABLE `students` DISABLE KEYS */;
-/*!40000 ALTER TABLE `students` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `users`
---
-
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8mb4 */;
 CREATE TABLE `users` (
-  `id` int(10) unsigned NOT NULL,
+  `id` int(10) UNSIGNED NOT NULL,
   `name` varchar(20) NOT NULL,
   `lastname` varchar(20) NOT NULL,
   `passwordSHA256` varchar(64) NOT NULL,
   `type` int(11) NOT NULL,
   `identificationType` int(10) NOT NULL,
-  `active` tinyint(1) NOT NULL DEFAULT 1,
-  PRIMARY KEY (`id`) USING BTREE
+  `active` tinyint(1) NOT NULL DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `users`
+-- Volcado de datos para la tabla `users`
 --
 
-LOCK TABLES `users` WRITE;
-/*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES
-(1,'admin','admin','8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918',0,0,1),
-(2,'2','2','d4735e3a265e16eee03f59718b9b5d03019c07d8b6c51f90da3a666eec13ab35',1,1,1),
-(3,'3','3','4e07408562bedb8b60ce05c1decfe3ad16b72230967de01f640b7e4729b49fce',2,1,1),
-(4,'4','4','4b227777d4dd1fc61c6f884f48641d02b4d121d3fd328cb08b5531fcacdabf8a',3,1,1),
-(5,'5','5','ef2d127de37b942baad06145e54b0c619a1f22327b2ebbcfbec78f5564afe39d',4,1,1),
-(6,'6','6','e7f6c011776e8db7cd330b54174fd76f7d0216b612387a5ffcfb81e6f0919683',5,1,1);
-/*!40000 ALTER TABLE `users` ENABLE KEYS */;
-UNLOCK TABLES;
+INSERT INTO `users` (`id`, `name`, `lastname`, `passwordSHA256`, `type`, `identificationType`, `active`) VALUES
+(1, 'admin', 'admin', '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918', 0, 0, 1),
+(2, '2', '2', 'd4735e3a265e16eee03f59718b9b5d03019c07d8b6c51f90da3a666eec13ab35', 1, 1, 1),
+(3, '3', '3', '4e07408562bedb8b60ce05c1decfe3ad16b72230967de01f640b7e4729b49fce', 2, 1, 1),
+(4, '4', '4', '4b227777d4dd1fc61c6f884f48641d02b4d121d3fd328cb08b5531fcacdabf8a', 3, 1, 1),
+(5, '5', '5', 'ef2d127de37b942baad06145e54b0c619a1f22327b2ebbcfbec78f5564afe39d', 4, 1, 1),
+(6, '6', '6', 'e7f6c011776e8db7cd330b54174fd76f7d0216b612387a5ffcfb81e6f0919683', 5, 1, 1);
 
 --
--- Dumping routines for database 'faco_luz_extension'
+-- Índices para tablas volcadas
 --
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
-/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+--
+-- Indices de la tabla `courses`
+--
+ALTER TABLE `courses`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indices de la tabla `enrollments`
+--
+ALTER TABLE `enrollments`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `fk_student_enrollment` (`studentId`),
+  ADD KEY `fk_period_enrollment` (`periodId`);
+
+--
+-- Indices de la tabla `enrollments_modules`
+--
+ALTER TABLE `enrollments_modules`
+  ADD KEY `fk_enrollment` (`enrollmentId`),
+  ADD KEY `fk_module` (`moduleId`);
+
+--
+-- Indices de la tabla `invoices`
+--
+ALTER TABLE `invoices`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indices de la tabla `modules`
+--
+ALTER TABLE `modules`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indices de la tabla `modules_courses`
+--
+ALTER TABLE `modules_courses`
+  ADD KEY `modules_courses_courses_FK` (`courseid`),
+  ADD KEY `modules_courses_modules_FK` (`moduleid`);
+
+--
+-- Indices de la tabla `periods`
+--
+ALTER TABLE `periods`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indices de la tabla `scores`
+--
+ALTER TABLE `scores`
+  ADD KEY `fk_student_scores` (`studentsId`),
+  ADD KEY `fk_module_scores` (`moduleId`);
+
+--
+-- Indices de la tabla `students`
+--
+ALTER TABLE `students`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `studentsId` (`studentId`);
+
+--
+-- Indices de la tabla `users`
+--
+ALTER TABLE `users`
+  ADD PRIMARY KEY (`id`) USING BTREE;
+
+--
+-- AUTO_INCREMENT de las tablas volcadas
+--
+
+--
+-- AUTO_INCREMENT de la tabla `courses`
+--
+ALTER TABLE `courses`
+  MODIFY `id` int(2) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+
+--
+-- AUTO_INCREMENT de la tabla `modules`
+--
+ALTER TABLE `modules`
+  MODIFY `id` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
+
+--
+-- Restricciones para tablas volcadas
+--
+
+--
+-- Filtros para la tabla `enrollments`
+--
+ALTER TABLE `enrollments`
+  ADD CONSTRAINT `fk_period_enrollment` FOREIGN KEY (`periodId`) REFERENCES `periods` (`id`),
+  ADD CONSTRAINT `fk_student_enrollment` FOREIGN KEY (`studentId`) REFERENCES `students` (`id`);
+
+--
+-- Filtros para la tabla `enrollments_modules`
+--
+ALTER TABLE `enrollments_modules`
+  ADD CONSTRAINT `fk_enrollment` FOREIGN KEY (`enrollmentId`) REFERENCES `enrollments` (`id`),
+  ADD CONSTRAINT `fk_module` FOREIGN KEY (`moduleId`) REFERENCES `modules` (`id`);
+
+--
+-- Filtros para la tabla `modules_courses`
+--
+ALTER TABLE `modules_courses`
+  ADD CONSTRAINT `modules_courses_courses_FK` FOREIGN KEY (`courseid`) REFERENCES `courses` (`id`),
+  ADD CONSTRAINT `modules_courses_modules_FK` FOREIGN KEY (`moduleid`) REFERENCES `modules` (`id`);
+
+--
+-- Filtros para la tabla `scores`
+--
+ALTER TABLE `scores`
+  ADD CONSTRAINT `fk_module_scores` FOREIGN KEY (`moduleId`) REFERENCES `modules` (`id`),
+  ADD CONSTRAINT `fk_student_scores` FOREIGN KEY (`studentsId`) REFERENCES `students` (`studentId`) ON UPDATE CASCADE;
+COMMIT;
+
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*M!100616 SET NOTE_VERBOSITY=@OLD_NOTE_VERBOSITY */;
-
--- Dump completed on 2026-02-05 21:42:16
