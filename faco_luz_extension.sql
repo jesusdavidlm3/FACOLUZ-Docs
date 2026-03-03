@@ -42,6 +42,8 @@ CREATE TABLE `certificates` (
 
 LOCK TABLES `certificates` WRITE;
 /*!40000 ALTER TABLE `certificates` DISABLE KEYS */;
+INSERT INTO `certificates` VALUES
+('2a5095b5-1045-11f1-9f8d-106530499799','49c8680e-0f9a-11f1-9f8d-106530499799','0c346a18-09d0-11f1-a6b1-106530499799','2026-02-22');
 /*!40000 ALTER TABLE `certificates` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -140,14 +142,9 @@ CREATE TABLE `invoices` (
   `id` uuid NOT NULL DEFAULT uuid(),
   `billableitem` enum('Inscripcion','Materia','Actividad especial','Reimpresion de certificado') NOT NULL,
   `chargedAmount` float NOT NULL,
-  `currencyReceived` enum('Bolivares en efectivo','Bolivares en transferencia','Dolares en efectivo','Exoneracion') NOT NULL,
-  `amountReceived` float NOT NULL,
-  `currencyReturned` enum('Bolivares en efectivo','Bolivares en transferencia','Dolares en efectivo','Exoneracion') DEFAULT NULL,
-  `reference` varchar(100) DEFAULT NULL,
   `date` datetime NOT NULL DEFAULT current_timestamp(),
-  `changeRate` float NOT NULL,
   `comments` text DEFAULT NULL,
-  `status` enum('Pendiente','Recibida','Rechazada') NOT NULL DEFAULT 'Pendiente',
+  `status` enum('Pendiente','Pagado') NOT NULL DEFAULT 'Pendiente',
   `StudentIdentification` int(11) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
@@ -159,6 +156,8 @@ CREATE TABLE `invoices` (
 
 LOCK TABLES `invoices` WRITE;
 /*!40000 ALTER TABLE `invoices` DISABLE KEYS */;
+INSERT INTO `invoices` VALUES
+('a7dba523-0f9e-11f1-9f8d-106530499799','Inscripcion',10,'2026-02-21 23:29:11',NULL,'Pendiente',1111);
 /*!40000 ALTER TABLE `invoices` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -228,6 +227,39 @@ CREATE TABLE `modules_courses` (
 LOCK TABLES `modules_courses` WRITE;
 /*!40000 ALTER TABLE `modules_courses` DISABLE KEYS */;
 /*!40000 ALTER TABLE `modules_courses` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `payments`
+--
+
+DROP TABLE IF EXISTS `payments`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
+CREATE TABLE `payments` (
+  `id` uuid NOT NULL DEFAULT uuid(),
+  `invoiceId` uuid NOT NULL,
+  `receivedPaymentMethod` enum('efectivo','Exoneracion') NOT NULL,
+  `returnedPaymentMethod` enum('efectivo','Exoneracion') NOT NULL,
+  `paidAmount` float NOT NULL,
+  `returnedAmount` float NOT NULL,
+  `reference` varchar(20) DEFAULT NULL,
+  `comments` text DEFAULT NULL,
+  `date` datetime NOT NULL DEFAULT current_timestamp(),
+  `changeRate` float NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `payments_invoices_FK` (`invoiceId`),
+  CONSTRAINT `payments_invoices_FK` FOREIGN KEY (`invoiceId`) REFERENCES `invoices` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `payments`
+--
+
+LOCK TABLES `payments` WRITE;
+/*!40000 ALTER TABLE `payments` DISABLE KEYS */;
+/*!40000 ALTER TABLE `payments` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -301,12 +333,12 @@ CREATE TABLE `students` (
   `studentsIdentification` int(10) NOT NULL,
   `birthDate` date NOT NULL,
   `email` varchar(100) NOT NULL,
-  `phone` int(11) NOT NULL,
+  `phone` int(10) unsigned NOT NULL,
   `address` text NOT NULL,
   `instructionGrade` enum('Ninguno','Bachillerato','Universitario','Postgrado') NOT NULL,
   `created_at` datetime NOT NULL DEFAULT current_timestamp(),
   `state` enum('Activo','Inactivo') NOT NULL DEFAULT 'Activo',
-  `section` int(11) NOT NULL,
+  `section` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `studentsId` (`studentsIdentification`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -318,6 +350,10 @@ CREATE TABLE `students` (
 
 LOCK TABLES `students` WRITE;
 /*!40000 ALTER TABLE `students` DISABLE KEYS */;
+INSERT INTO `students` VALUES
+('382f4b8f-0f9a-11f1-9f8d-106530499799','Juan','perez',NULL,NULL,1111,'2026-01-12','jjd@o.c',4127859999,'kkk','Universitario','2026-02-21 22:57:26','Activo',NULL),
+('49c8680e-0f9a-11f1-9f8d-106530499799','jesus','Lozano',NULL,NULL,890,'2026-01-05','jjd@o.c',414223,'kkk','Postgrado','2026-02-21 22:57:56','Activo',NULL),
+('55af3fe9-0f9a-11f1-9f8d-106530499799','David','Garcia',NULL,NULL,3353,'2026-01-06','jjd@o.c',41409876,'kkk','Bachillerato','2026-02-21 22:58:16','Activo',NULL);
 /*!40000 ALTER TABLE `students` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -399,7 +435,12 @@ CREATE TABLE `users` (
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
 INSERT INTO `users` VALUES
-(1,'admin','admin','8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918',0,0,1);
+(1,'admin','admin','8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918',0,0,1),
+(2,'2','2','d4735e3a265e16eee03f59718b9b5d03019c07d8b6c51f90da3a666eec13ab35',1,1,1),
+(3,'3','3','4e07408562bedb8b60ce05c1decfe3ad16b72230967de01f640b7e4729b49fce',2,1,1),
+(4,'4','4','4b227777d4dd1fc61c6f884f48641d02b4d121d3fd328cb08b5531fcacdabf8a',3,1,1),
+(5,'5','5','ef2d127de37b942baad06145e54b0c619a1f22327b2ebbcfbec78f5564afe39d',4,1,1),
+(6,'6','6','e7f6c011776e8db7cd330b54174fd76f7d0216b612387a5ffcfb81e6f0919683',5,1,1);
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -416,4 +457,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*M!100616 SET NOTE_VERBOSITY=@OLD_NOTE_VERBOSITY */;
 
--- Dump completed on 2026-02-14 20:39:45
+-- Dump completed on 2026-03-02 20:36:14
