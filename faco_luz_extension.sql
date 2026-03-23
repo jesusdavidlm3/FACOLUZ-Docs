@@ -64,7 +64,7 @@ CREATE TABLE `changelogs` (
 CREATE TABLE `courses` (
   `id` uuid NOT NULL DEFAULT uuid(),
   `description` text NOT NULL,
-  `state` enum('Activo','Inactivo') NOT NULL DEFAULT 'Activo',
+  `status` enum('Activo','Inactivo') NOT NULL DEFAULT 'Activo',
   `create_at` datetime NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -72,7 +72,7 @@ CREATE TABLE `courses` (
 -- Volcado de datos para la tabla `courses`
 --
 
-INSERT INTO `courses` (`id`, `description`, `state`, `create_at`) VALUES
+INSERT INTO `courses` (`id`, `description`, `status`, `create_at`) VALUES
 ('0c346a18-09d0-11f1-a6b1-106530499799', 'Asistente de Higienista Dental', 'Activo', '2026-02-14 18:05:36');
 
 -- --------------------------------------------------------
@@ -84,21 +84,20 @@ INSERT INTO `courses` (`id`, `description`, `state`, `create_at`) VALUES
 CREATE TABLE `enrollments` (
   `id` uuid NOT NULL DEFAULT uuid(),
   `studentId` uuid NOT NULL,
+  `sectionId` uuid NOT NULL,
   `dateEnrollment` datetime NOT NULL DEFAULT current_timestamp(),
-  `periodId` uuid NOT NULL,
-  `state` enum('Pagada','Deuda') NOT NULL
+  `status` enum('Pagada','Deuda') NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `enrollments_sections`
+-- Estructura de tabla para la tabla `enrollments_grade`
 --
 
-CREATE TABLE `enrollments_sections` (
+CREATE TABLE `enrollments_grade` (
   `id` uuid NOT NULL DEFAULT uuid(),
   `enrollmentId` uuid NOT NULL,
-  `sectionId` uuid NOT NULL,
   `score` int(3) DEFAULT NULL,
   `dateScore` datetime DEFAULT NULL,
   `status` enum('Inscrito','Aprobado','Reprobado','Retirado') NOT NULL
@@ -137,14 +136,14 @@ CREATE TABLE `modules` (
   `id` uuid NOT NULL DEFAULT uuid(),
   `description` text NOT NULL,
   `create_at` datetime NOT NULL DEFAULT current_timestamp(),
-  `state` enum('Activo','Inactivo') NOT NULL DEFAULT 'Activo'
+  `status` enum('Activo','Inactivo') NOT NULL DEFAULT 'Activo'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `modules`
 --
 
-INSERT INTO `modules` (`id`, `description`, `create_at`, `state`) VALUES
+INSERT INTO `modules` (`id`, `description`, `create_at`, `status`) VALUES
 ('0c3dae7c-09d0-11f1-a6b1-106530499799', 'Nociones basicas de la Anatomia Dental y Oclusion', '2026-02-14 18:05:36', 'Activo'),
 ('0c3db180-09d0-11f1-a6b1-106530499799', 'Realaciones Humanas', '2026-02-14 18:05:36', 'Activo'),
 ('0c3db276-09d0-11f1-a6b1-106530499799', 'Sistema de Atencion Odontologica', '2026-02-14 18:05:36', 'Activo'),
@@ -170,7 +169,8 @@ INSERT INTO `modules` (`id`, `description`, `create_at`, `state`) VALUES
 
 CREATE TABLE `modules_courses` (
   `moduleid` uuid NOT NULL,
-  `courseid` uuid NOT NULL
+  `courseid` uuid NOT NULL,
+  `order` int(2) UNSIGNED NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 
 -- --------------------------------------------------------
@@ -202,10 +202,11 @@ CREATE TABLE `periods` (
   `id` uuid NOT NULL DEFAULT uuid(),
   `year` int(4) NOT NULL,
   `period` int(2) NOT NULL,
+  `modality` enum('Intensivo','Sabatino') NOT NULL,
   `startDate` date NOT NULL,
   `endDate` date NOT NULL,
   `create_at` datetime NOT NULL DEFAULT current_timestamp(),
-  `state` enum('En curso','Finalizado') NOT NULL DEFAULT 'En curso'
+  `status` enum('En curso','Finalizado') NOT NULL DEFAULT 'En curso'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -220,9 +221,8 @@ CREATE TABLE `sections` (
   `moduleId` uuid NOT NULL,
   `teacherId` uuid NOT NULL,
   `code` varchar(1) NOT NULL,
-  `modality` enum('Intensivo','Sabatino','','') NOT NULL,
   `quota` int(2) NOT NULL,
-  `status` enum('Activa','Cerrada','','') NOT NULL
+  `status` enum('Activa','Cerrada') NOT NULL DEFAULT 'Activa'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -244,14 +244,14 @@ CREATE TABLE `students` (
   `address` text NOT NULL,
   `instructionGrade` enum('Ninguno','Bachillerato','Universitario','Postgrado') NOT NULL,
   `created_at` datetime NOT NULL DEFAULT current_timestamp(),
-  `state` enum('Activo','Inactivo') NOT NULL DEFAULT 'Activo'
+  `status` enum('Activo','Inactivo') NOT NULL DEFAULT 'Activo'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `students`
 --
 
-INSERT INTO `students` (`id`, `name`, `lastname`, `photo`, `parentalPermission`, `studentsIdentification`, `birthDate`, `email`, `phone`, `address`, `instructionGrade`, `created_at`, `state`) VALUES
+INSERT INTO `students` (`id`, `name`, `lastname`, `photo`, `parentalPermission`, `studentsIdentification`, `birthDate`, `email`, `phone`, `address`, `instructionGrade`, `created_at`, `status`) VALUES
 ('382f4b8f-0f9a-11f1-9f8d-106530499799', 'Juan', 'perez', NULL, NULL, 1111, '2026-01-12', 'jjd@o.c', 4127859999, 'kkk', 'Universitario', '2026-02-21 22:57:26', 'Activo'),
 ('49c8680e-0f9a-11f1-9f8d-106530499799', 'jesus', 'Lozano', NULL, NULL, 890, '2026-01-05', 'jjd@o.c', 414223, 'kkk', 'Postgrado', '2026-02-21 22:57:56', 'Activo'),
 ('55af3fe9-0f9a-11f1-9f8d-106530499799', 'David', 'Garcia', NULL, NULL, 3353, '2026-01-06', 'jjd@o.c', 41409876, 'kkk', 'Bachillerato', '2026-02-21 22:58:16', 'Activo');
@@ -267,6 +267,8 @@ CREATE TABLE `teachers` (
   `name` varchar(20) NOT NULL,
   `lastName` varchar(20) NOT NULL,
   `identification` int(11) UNSIGNED NOT NULL,
+  `email` varchar(100) NOT NULL,
+  `phone` int(10) UNSIGNED NOT NULL,
   `status` enum('Activo','Inactivo') NOT NULL DEFAULT 'Activo'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 
@@ -329,14 +331,12 @@ ALTER TABLE `courses`
 ALTER TABLE `enrollments`
   ADD PRIMARY KEY (`id`),
   ADD KEY `fk_student_enrollment` (`studentId`),
-  ADD KEY `fk_period_enrollment` (`periodId`);
-
+  ADD KEY `fk_section_enrollment` (`sectionId`);
 --
--- Indices de la tabla `enrollments_sections`
+-- Indices de la tabla `enrollments_grade`
 --
-ALTER TABLE `enrollments_sections`
-  ADD KEY `fk_enrollment` (`enrollmentId`),
-  ADD KEY `fk_section` (`sectionId`);
+ALTER TABLE `enrollments_grade`
+  ADD KEY `fk_enrollment` (`enrollmentId`);
 
 --
 -- Indices de la tabla `invoices`
@@ -419,15 +419,14 @@ ALTER TABLE `changelogs`
 -- Filtros para la tabla `enrollments`
 --
 ALTER TABLE `enrollments`
-  ADD CONSTRAINT `fk_period_enrollment` FOREIGN KEY (`periodId`) REFERENCES `periods` (`id`),
-  ADD CONSTRAINT `fk_student_enrollment` FOREIGN KEY (`studentId`) REFERENCES `students` (`id`);
+  ADD CONSTRAINT `fk_student_enrollment` FOREIGN KEY (`studentId`) REFERENCES `students` (`id`),
+  ADD CONSTRAINT `fk_section_enrollment` FOREIGN KEY (`sectionId`) REFERENCES `sections` (`id`);
 
 --
--- Filtros para la tabla `enrollments_sections`
+-- Filtros para la tabla `enrollments_grade`
 --
-ALTER TABLE `enrollments_sections`
-  ADD CONSTRAINT `fk_enrollment` FOREIGN KEY (`enrollmentId`) REFERENCES `enrollments` (`id`),
-  ADD CONSTRAINT `fk_section` FOREIGN KEY (`sectionId`) REFERENCES `sections` (`id`);
+ALTER TABLE `enrollments_grade`
+  ADD CONSTRAINT `fk_enrollment` FOREIGN KEY (`enrollmentId`) REFERENCES `enrollments` (`id`);
 
 --
 -- Filtros para la tabla `modules_courses`
