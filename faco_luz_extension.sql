@@ -288,6 +288,15 @@ CREATE TABLE `users` (
   `active` tinyint(1) NOT NULL DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
+
+CREATE TABLE `documents` (
+  `id` uuid NOT NULL,
+  `studentId` uuid NOT NULL,
+  `docType` int(11) NOT NULL DEFAULT 1,
+  KEY `documents_students_FK` (`studentId`),
+  CONSTRAINT `documents_students_FK` FOREIGN KEY (`studentId`) REFERENCES `students` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+
 --
 -- Volcado de datos para la tabla `users`
 --
