@@ -100,7 +100,7 @@ CREATE TABLE `enrollments_grade` (
   `enrollmentId` uuid NOT NULL,
   `score` int(3) DEFAULT NULL,
   `dateScore` datetime DEFAULT NULL,
-  `status` enum('Inscrito','Aprobado','Reprobado','Retirado') NOT NULL
+  `status` enum('Inscrito','Aprobado','Reprobado','Retirado') NOT NULL DEFAULT 'Inscrito'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -176,6 +176,21 @@ CREATE TABLE `modules_courses` (
 -- --------------------------------------------------------
 
 --
+-- Estructura de tabla para la tabla `modify_scores`
+--
+
+CREATE TABLE `modify_scores` (
+  `id` uuid NOT NULL DEFAULT uuid(),
+  `enrollmentGradeId` uuid NOT NULL,
+  `lastscore` int(3) NOT NULL,
+  `newscore` int(3) NOT NULL,
+  `date` datetime NOT NULL DEFAULT current_timestamp(),
+  `reason` text DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Estructura de tabla para la tabla `payments`
 --
 
@@ -222,7 +237,7 @@ CREATE TABLE `sections` (
   `teacherId` uuid NOT NULL,
   `code` varchar(1) NOT NULL,
   `quota` int(2) NOT NULL,
-  `status` enum('Activa','Cerrada') NOT NULL DEFAULT 'Activa'
+  `status` enum('Activa','Por cargar','Cerrada') NOT NULL DEFAULT 'Activa'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -345,6 +360,7 @@ ALTER TABLE `enrollments`
 -- Indices de la tabla `enrollments_grade`
 --
 ALTER TABLE `enrollments_grade`
+  ADD PRIMARY KEY (`id`),
   ADD KEY `fk_enrollment` (`enrollmentId`);
 
 --
@@ -365,6 +381,13 @@ ALTER TABLE `modules`
 ALTER TABLE `modules_courses`
   ADD KEY `modules_courses_courses_FK` (`courseid`),
   ADD KEY `modules_courses_modules_FK` (`moduleid`);
+
+--
+-- Indices de la tabla `modify_scores`
+--
+ALTER TABLE `modify_scores`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `modify_scores_enrollments_FK` (`enrollmentGradeId`);
 
 --
 -- Indices de la tabla `payments`
@@ -443,6 +466,12 @@ ALTER TABLE `enrollments_grade`
 ALTER TABLE `modules_courses`
   ADD CONSTRAINT `modules_courses_courses_FK` FOREIGN KEY (`courseid`) REFERENCES `courses` (`id`),
   ADD CONSTRAINT `modules_courses_modules_FK` FOREIGN KEY (`moduleid`) REFERENCES `modules` (`id`);
+
+--
+-- Filtros para la tabla `modify_scores`
+--
+ALTER TABLE `modify_scores`
+  ADD CONSTRAINT `modify_scores_enrollments_FK` FOREIGN KEY (`enrollmentGradeId`) REFERENCES `enrollments_grade` (`id`);
 
 --
 -- Filtros para la tabla `payments`
