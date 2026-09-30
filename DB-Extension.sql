@@ -1,3 +1,38 @@
+-- ============================================================================
+--  FACOLUZ Extension - esquema y semilla de la base de datos
+--  Crea la base `faco_luz_extension` COMPLETA desde cero.
+--
+--  Como importarlo (XAMPP / MariaDB local, sin Docker):
+--      C:\xampp\mysql\bin\mysql.exe -u root -p < DB-Extension.sql
+--    o desde phpMyAdmin: Importar -> este archivo.
+--    Ojo: el archivo empieza con CREATE DATABASE, asi que no hace falta crear la
+--    base a mano. Si ya existe, la reusa y cada DROP TABLE reemplaza la tabla.
+--
+--  ADVERTENCIA: borra y recrea invoices, payments y el resto de las tablas. Para
+--  una base que YA tiene datos, no usar este archivo: usar en su lugar
+--  Back/FACOLUZ-Back-Extension/migrations/001_p0_auditoria.sql, que solo agrega
+--  columnas e indices y no toca los datos.
+--
+--  Cambios de este script respecto al dump del 2026-09-25 (P0, tarea T2):
+--    invoices
+--      + issuedBy, cancelledAt, cancelledBy, cancelledReason  -> quien emitio y
+--        quien anulo. Con dos personas facturando, sin esto no hay auditoria.
+--      + indices de date, (StudentIdentification, date) y status
+--      + CHECK: el total y la cantidad tienen que ser mayores a 0
+--    payments
+--      + indice de date
+--      + CHECK: montos no negativos, y la devolucion no puede superar lo pagado
+--      ~ la exoneracion se justifica en `comments` (un solo campo de observacion,
+--        con el justificativo y quien lo autorizo). No se agregan columnas.
+--
+--  Lo que este script todavia NO trae, a proposito (ver PLAN-P0-FACTURACION.md):
+--    - Correlativo de factura (`invoices.number` + tabla `invoice_counters`).
+--    - CHECK de exoneracion justificada: se habilita en la tarea T8, cuando el
+--      backend ya exija la observacion. Aplicarlo antes seria un 500 crudo.
+--    - UNIQUE en students.studentsIdentification: hoy solo tiene un indice normal,
+--      asi que se pueden registrar dos estudiantes con la misma cedula.
+-- ============================================================================
+
 -- MariaDB dump 10.20-13.0.2-MariaDB, for debian-linux-gnu (x86_64)
 --
 -- Host: localhost    Database: faco_luz_extension
@@ -298,9 +333,22 @@ CREATE TABLE `invoices` (
   `status` enum('Pendiente','Pagado','Anulada') NOT NULL DEFAULT 'Pendiente',
   `StudentIdentification` int(11) NOT NULL,
   `quantity` int(11) NOT NULL,
+  `issuedBy` int(11) unsigned DEFAULT NULL COMMENT 'users.id de quien emitio la factura. Sin esto, con dos personas facturando, no hay forma de saber quien emitio una factura equivocada',
+  `cancelledAt` datetime DEFAULT NULL COMMENT 'Momento de la anulacion. Anular dos veces la misma factura queda bloqueado por status',
+  `cancelledBy` int(11) unsigned DEFAULT NULL COMMENT 'users.id de quien anulo',
+  `cancelledReason` text DEFAULT NULL COMMENT 'Motivo de la anulacion. El backend lo exige: una anulacion sin motivo no se puede devolver',
   PRIMARY KEY (`id`),
   KEY `fk_invoices_billable` (`billableid`),
-  CONSTRAINT `fk_invoices_billable` FOREIGN KEY (`billableid`) REFERENCES `billables` (`id`)
+  KEY `idx_invoices_date` (`date`),
+  KEY `idx_invoices_student` (`StudentIdentification`, `date`),
+  KEY `idx_invoices_status` (`status`),
+  KEY `fk_invoices_issued_by` (`issuedBy`),
+  KEY `fk_invoices_cancelled_by` (`cancelledBy`),
+  CONSTRAINT `fk_invoices_billable` FOREIGN KEY (`billableid`) REFERENCES `billables` (`id`),
+  CONSTRAINT `fk_invoices_issued_by` FOREIGN KEY (`issuedBy`) REFERENCES `users` (`id`),
+  CONSTRAINT `fk_invoices_cancelled_by` FOREIGN KEY (`cancelledBy`) REFERENCES `users` (`id`),
+  CONSTRAINT `chk_invoices_charged_positive` CHECK (`chargedAmount` > 0),
+  CONSTRAINT `chk_invoices_quantity_positive` CHECK (`quantity` > 0)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -460,12 +508,46 @@ CREATE TABLE `payments` (
   `returnedAmount` float DEFAULT 0,
   `reference` varchar(20) DEFAULT NULL,
   `returnReference` varchar(20) DEFAULT NULL,
-  `comments` text DEFAULT NULL,
+  `comments` text DEFAULT NULL COMMENT 'Observaciones del pago. En una EXONERACION es obligatorio y debe dejar tanto el justificativo como quien lo autorizo, en un solo texto (decision D4)',
   `date` datetime NOT NULL DEFAULT current_timestamp(),
   `exchangeRate` float NOT NULL,
   PRIMARY KEY (`id`),
   KEY `payments_invoices_FK` (`invoiceId`),
-  CONSTRAINT `payments_invoices_FK` FOREIGN KEY (`invoiceId`) REFERENCES `invoices` (`id`)
+  KEY `idx_payments_date` (`date`),
+  CONSTRAINT `payments_invoices_FK` FOREIGN KEY (`invoiceId`) REFERENCES `invoices` (`id`),
+  CONSTRAINT `chk_payments_paid_nonneg` CHECK (`paidAmount` >= 0),
+  CONSTRAINT `chk_payments_returned_nonneg` CHECK (`returnedAmount` >= 0),
+
+  -- El techo de "no devuelvas mas de lo que pagaste" vale DENTRO de un
+  -- movimiento: pagan $20 y se devuelven $5, bien; se devuelven $25, mal.
+  --
+  -- Pero la anulacion escribe un movimiento que no es un pago: es una salida de
+  -- dinero, `paidAmount = 0` y `returnedAmount = <lo que se devuelve>`. Contra
+  -- un `returnedAmount <= paidAmount` a secas eso es `10 <= 0` y la fila no
+  -- entra: anular una factura cobrada fallaba con ERROR 4025. La migracion 001
+  -- metio este CHECK asi y nadie lo probo con una factura pagada.
+  --
+  -- Con `paidAmount = 0` no hay entrada contra la que comparar, asi que el
+  -- movimiento es una devolucion pura y el CHECK no dice nada. El techo real
+  -- (no devolver mas de lo cobrado en toda la factura) no lo puede hacer un
+  -- CHECK por fila porque abarca varias: lo impone `makePayment` sumando con la
+  -- factura en FOR UPDATE. Este solo cuida la coherencia de cada fila aislada.
+  CONSTRAINT `chk_payments_returned_le_paid` CHECK (
+    `paidAmount` = 0 OR `returnedAmount` IS NULL OR `returnedAmount` <= `paidAmount`
+  ),
+
+  -- Una exoneracion sin justificacion no es una decision: es una deuda que
+  -- alguien decidio perdonar sin dejar escrito por que ni quien lo autorizo.
+  -- El backend lo rechaza (POST /api/payments, min 10 caracteres) y el modal de
+  -- cobro lo pide antes de enviar; esto es la ultima linea, para lo que llegue
+  -- por SQL. Se activo en la migracion 002 (T8).
+  --
+  -- Las filas de devolucion por anulacion tienen `receivedPaymentMethod` NULL.
+  -- `NULL <> 'Exoneracion'` da NULL y un CHECK que da NULL se considera
+  -- cumplido, asi que la devolucion no choca con esto.
+  CONSTRAINT `chk_payments_exoneracion_observada` CHECK (
+    `receivedPaymentMethod` <> 'Exoneracion' OR `comments` IS NOT NULL
+  )
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
